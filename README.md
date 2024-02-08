@@ -6,7 +6,7 @@
 модель для формы - UserCreateForm
 Потраченное время - 3ч
 
-Для решения первой заачки создал BalanceController
+Для решения первой задачки создал BalanceController
 модель для формы - BalanceForm
 Потраченное время - 1ч
 
@@ -23,4 +23,4 @@ CREATE TABLE Phone
      FOREIGN KEY (userId) REFERENCES "user" (id) ON DELETE CASCADE
 );
 
-Залить на GIT - ушло 1 час
+Залить на GIT - ушло 20 мин

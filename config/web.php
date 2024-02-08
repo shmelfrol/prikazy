@@ -15,6 +15,9 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 's6bPlkFarHqvoUxt_yRZ18EuZOxyDg0a',
+//            'parsers' => [
+//                'application/json' => 'yii\web\JsonParser',
+//            ]
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
@@ -35,14 +38,7 @@ $config = [
             // send all mails to a file by default.
             'useFileTransport' => true,
         ],
-        'ldap' => array(
-            'class' => 'LdapComponent',
-            'baseDn' => 'DC=example,DC=org', //example.org
-            'accountSuffix' => '@example.org',
-            'domainControllers' => array('dc.example.org'),
-            'adminUsername' => 'username',
-            'adminPassword' => 'password'
-        ),
+
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -56,10 +52,27 @@ $config = [
 
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-            ],
+           // 'enableStrictParsing' => true,
+//            'showScriptName' => false,
+//            'rules' => [
+//                ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
+//            ],
         ],
+        'ad' => [
+            'class' => 'Edvlerblog\Adldap2\Adldap2Wrapper',
+            'providers' => [
+                'default' =>[
+                    'autoconnect' => true,
+                    'config' => [
+                        'account_suffix' => '@kubstu.edu',
+                        'hosts' => ['dc-01.kubstu.edu', 'dc-02.kubstu.edu'],
+                        'base_dn' => 'dc=kubstu,dc=edu',
+                        'username' => 'shmelevfm@kubstu.edu',
+                        'password' => 'Jrt.irb5',
+                    ]
+                ]
+            ],
+            ]
 
     ],
     'params' => $params,
