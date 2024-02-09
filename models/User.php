@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\db\ActiveRecord;
 
 class User extends ActiveRecord implements \yii\web\IdentityInterface
@@ -13,29 +14,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return 'user';
     }
 
-//
-//    public $id;
-//    public $username;
-//    public $password;
-//    public $authKey;
-//    public $accessToken;
-//
-//    private static $users = [
-//        '100' => [
-//            'id' => '100',
-//            'username' => 'admin',
-//            'password' => 'admin',
-//            'authKey' => 'test100key',
-//            'accessToken' => '100-token',
-//        ],
-//        '101' => [
-//            'id' => '101',
-//            'username' => 'demo',
-//            'password' => 'demo',
-//            'authKey' => 'test101key',
-//            'accessToken' => '101-token',
-//        ],
-//    ];
+
 
 
     /**
@@ -98,6 +77,13 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        $un=$this->username;
+        if(Yii::$app->ad->auth()->attempt($un,$password)){
+            return true;
+        }else{
+            return false;
+        }
+
+        //return  Yii::$app->security->validatePassword($password, $this->password);
     }
 }

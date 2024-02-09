@@ -154,11 +154,9 @@ class AdminController extends Controller
     {
 
         $model = new CreateRoleForm();
-
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $auth = Yii::$app->authManager;
             $role = $auth->getRole($model->name);
-
             if (!$role) {
                 try {
                     $newRole = $auth->createRole($model->name);
@@ -320,15 +318,9 @@ class AdminController extends Controller
         $model = new UserCreateForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $user=User::findOne(['username'=>$model->username]);
-            if(!$user){
-                $newUser = new User();
-                $newUser->username = $model->username;
-                $newUser->password = Yii::$app->security->generatePasswordHash($model->password);
-                $newUser->save();
-                $this->redirect(['users']);
-            }else{return 'такой пользователь уже есть';}
-
+            $model->save();
+            Yii::$app->session->setFlash('success', 'User registered!');
+            $this->redirect(['users']);
         }
 
         return $this->render('userCreate', compact('model'));
