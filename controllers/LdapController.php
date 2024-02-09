@@ -4,6 +4,7 @@
 namespace app\controllers;
 
 
+use app\models\LdapLoginForm;
 use yii\web\Controller;
 use Yii;
 class LdapController extends Controller
@@ -11,9 +12,19 @@ class LdapController extends Controller
  public function actionIndex(){
      $un='test_user';
      $ldapObject = \Yii::$app->ad->search()->findBy('sAMAccountname', $un);
-     Yii::$app->ad->
+
      $group=$ldapObject->memberof;
-     return print_r($group);
+     $model = new LdapLoginForm();
+
+     if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+
+         if(Yii::$app->ad->auth()->attempt($model->username,$model->password)){
+             return "OK";
+         }else{return "dhdtjtyj";}
+    }
+
+     return $this->render('loginForm', compact('model',));
  }
 
 

@@ -77,13 +77,8 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function validatePassword($password)
     {
-        $un=$this->username;
-        if(Yii::$app->ad->auth()->attempt($un,$password)){
-            return true;
-        }else{
-            return false;
-        }
 
+        return Yii::$app->ad->auth()->attempt($this->username,$password);
         //return  Yii::$app->security->validatePassword($password, $this->password);
     }
 }

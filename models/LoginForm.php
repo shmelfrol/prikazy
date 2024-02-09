@@ -4,7 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
-
+require_once '../helpers/user.php';
 /**
  * LoginForm is the model behind the login form.
  *
@@ -73,7 +73,24 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
+            if(Yii::$app->ad->auth()->attempt($this->username,$this->password)){
+                $user=User::findByUsername($this->username);
+               if($user){
+                   if(Yii::$app->security->validatePassword($this->password, $user->password)){
+                       $this->_user=$user;
+                   }else{
+//                       $user->password = Yii::$app->security->generatePasswordHash($this->password);
+//                       $user->updated_at=time();
+//                       $user->save();
+                       $this->_user=ResetUserPas($user, $this->password);
+                   }
+               }else{
+                   $this->_user= CreateUser($this->username, $this->password);
+
+               }
+            }
+
+            //
         }
 
         return $this->_user;

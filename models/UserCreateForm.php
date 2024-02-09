@@ -30,6 +30,7 @@ class UserCreateForm extends \yii\base\Model
 
     public function save(){
         if($this->validate()){
+
             CreateUser($this->username, $this->password);
         }
     }
