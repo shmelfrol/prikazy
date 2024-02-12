@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+//$ldap= \app\models\Ldap::findOne(['turnon'=> True]);
 
 $config = [
     'id' => 'basic',
@@ -67,8 +68,8 @@ $config = [
                         'account_suffix' => '@kubstu.edu',
                         'hosts' => ['dc-01.kubstu.edu', 'dc-02.kubstu.edu'],
                         'base_dn' => 'dc=kubstu,dc=edu',
-                        'username' => 'shmelevfm@kubstu.edu',
-                        'password' => 'Jrt.irb5',
+                        'username' => 'test_admin@kubstu.edu',
+                        'password' => 'Rhtfnbdyjcnm5',
                     ]
                 ]
             ],

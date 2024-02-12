@@ -16,9 +16,10 @@ use yii\widgets\ActiveForm;
 
 <?= $form->field($model, 'username', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control','readonly' => false]])->label('Логин')?>
 <?= $form->field($model, 'roles')->checkboxList($roles)->label("Роли") ?>
-<?= $form->field($model, 'password', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control','readonly' => false]])->label('Введите новый пароль')?>
-<?= $form->field($model, 'repassword', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control','readonly' => false]])->label('Повторите новый пароль')?>
-    <div class="form-group">
+<?= $form->field($model, 'password')->passwordInput()->label('Пароль'); ?>
+<?= $form->field($model, 'repassword')->passwordInput()->label('Повторите пароль'); ?>
+
+<div class="form-group">
         <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
     </div>
 

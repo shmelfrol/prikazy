@@ -33,7 +33,10 @@ use yii\helpers\Url;
                 <?php endforeach ?>
             </td>
             <td></td>
-            <td style="width: 1%; white-space: nowrap;"> <a href="<?php echo Url::toRoute(["user-update", 'id'=> $u->id]); ?>" class="btn btn-primary"  role="button">Изменить</a></td>
+            <td style="width: 1%; white-space: nowrap;">
+                <a href="<?php echo Url::toRoute(["user-update", 'id'=> $u->id]); ?>" style="text-decoration: none; margin-right: 10px"  role="button">	&#9998;</a>
+                <a href="<?php echo Url::toRoute(["del-user", 'id'=> $u->id]); ?>" style="text-decoration: none"  role="button">	&#10060;</a>
+            </td>
         </tr>
             <?php $i++ ?>
         <?php endforeach ?>

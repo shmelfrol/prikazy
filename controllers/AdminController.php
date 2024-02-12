@@ -5,6 +5,9 @@ namespace app\controllers;
 
 
 use app\models\CreateRoleForm;
+use app\models\Ldap;
+use app\models\LdapForm;
+use app\models\LdapLoginForm;
 use app\models\Phone;
 use app\models\RoleBase;
 use app\models\UpdatePermissionForm;
@@ -12,16 +15,64 @@ use app\models\UpdateRoleForm;
 use app\models\User;
 use app\models\UserBase;
 use app\models\UserCreateForm;
+use app\models\UserUpdateForm;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use function Symfony\Component\Finder\name;
 
+class AdminUrl
+{
+    public $url;
+    public $name;
+    public $img;
+}
+
+
 class AdminController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
 
-        $urls = ["roles" => "Роли", "permissions" => "Разрешения", "users" => "Пользователи"];
+        $roles = new AdminUrl();
+        $roles->url = 'roles';
+        $roles->name = "Роли";
+        $roles->img = '../../web/images/roles.png';
+
+        $permissions = new AdminUrl();
+        $permissions->url = 'permissions';
+        $permissions->name = "Разрешения";
+        $permissions->img = '../../web/images/perms.png';
+
+        $users = new AdminUrl();
+        $users->url = 'users';
+        $users->name = "Пользователи";
+        $users->img = '../../web/images/users.png';
+        $urls = [$roles, $permissions, $users];
+
+        $ldap = new AdminUrl();
+        $ldap->url = 'ldap';
+        $ldap->name = "LDAP";
+        $ldap->img = '../../web/images/users.png';
+        $urls = [$roles, $permissions, $users, $ldap];
+
+        //$urls = ["roles" => "Роли", "permissions" => "Разрешения", "users" => "Пользователи"];
 
         return $this->render('index', compact('urls'));
 
@@ -67,7 +118,6 @@ class AdminController extends Controller
             if ($newDesc) {
                 $role->description = $newDesc;
                 $auth->update($name, $role);
-
             }
             if ($newPerms) {
                 foreach ($newPerms as $p) {
@@ -117,6 +167,59 @@ class AdminController extends Controller
 
     }
 
+    public function actionAddRole()
+    {
+        $model = new CreateRoleForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $auth = Yii::$app->authManager;
+            $role = $auth->getRole($model->name);
+            if (!$role) {
+                try {
+                    $newRole = $auth->createRole($model->name);
+                    $newRole->description = $model->description;
+                    $auth->add($newRole);
+                    return "Роль успешно добавлена";
+                } catch (\Throwable $e) {
+                    throw $e;
+                }
+            } else {
+                return "Такая роль уже существует";
+            }
+        }
+
+        return $this->render('createRolePermission', compact('model',));
+
+    }
+
+    public function actionDelRole()
+    {
+        $name = Yii::$app->request->get('name');
+        //роль admin нельзя удалять
+        if ($name !== 'admin') {
+            $auth = Yii::$app->authManager;
+            $role = $auth->getRole($name);
+            //return print_r($role);
+
+            if ($role) {
+                //сначала удалеям разрешения, которые прикреплены к роли
+                $perms = $auth->getPermissionsByRole($name);
+                foreach ($perms as $p) {
+                    $auth->removeChild($role, $p);
+                }
+                // затем находим пользователей с этой ролью и удаляем эту роль у пользователй
+                $users = $auth->getUserIdsByRole($name);
+                foreach ($users as $key => $userId) {
+                    $auth->revoke($role, $userId);
+                }
+
+            }
+            // теперь можно удалить роль
+            $auth->remove($role);
+        }else{ return "Роль администратора системы нельзя удалять";}
+        $this->redirect(['roles']);
+
+    }
+
     public function actionPermission()
     {
 
@@ -150,36 +253,9 @@ class AdminController extends Controller
     }
 
 
-    public function actionAddRole()
-    {
-
-        $model = new CreateRoleForm();
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $auth = Yii::$app->authManager;
-            $role = $auth->getRole($model->name);
-            if (!$role) {
-                try {
-                    $newRole = $auth->createRole($model->name);
-                    $newRole->description = $model->description;
-                    $auth->add($newRole);
-                    return "Роль успешно добавлена";
-                } catch (\Throwable $e) {
-                    throw $e;
-                }
-            } else {
-                return "Такая роль уже существует";
-            }
-        }
-
-        return $this->render('createRolePermission', compact('model',));
-
-    }
-
     public function actionAddPermission()
     {
-
         $model = new CreateRoleForm();
-
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $auth = Yii::$app->authManager;
             $permission = $auth->getPermission($model->name);
@@ -199,6 +275,29 @@ class AdminController extends Controller
         }
         return $this->render('createRolePermission', compact('model'));
 
+    }
+
+    public function actionDelPermission(){
+        $name = Yii::$app->request->get('name');
+        $auth = Yii::$app->authManager;
+        $perm = $auth->getPermission($name);
+        if($perm){
+            $allRoles=$auth->getRoles();
+            //сначала во всех ролях убираем связь с разрешением
+            foreach ($allRoles as $r){
+                $permsByRole= $auth->getPermissionsByRole($r->name);
+                foreach ($permsByRole as $p){
+                    if($p->name === $name){
+                        $auth->removeChild($r, $p);
+                        return "ok";
+                    }
+                }
+
+            }
+            $auth->remove($perm);
+            $this->redirect(['permissions']);
+
+        }
     }
 
     public function actionUsers()
@@ -240,27 +339,22 @@ class AdminController extends Controller
         foreach ($allRoles as $r) {
             $roles[$r->name] = $r->name;
         }
-        $model = new UserCreateForm();
+        $model = new UserUpdateForm();
         $user = User::findOne(['id' => $userId]);
         $model->id = $user->id;
         $model->username = $user->username;
         $model->roles = $uroles;
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $post = Yii::$app->request->post();
-            if (isset($post['UserCreateForm']['roles']) && isset($post['UserCreateForm']['password']) && isset($post['UserCreateForm']['repassword'])) {
-                $newUserRoles = $post['UserCreateForm']['roles'];
-                $password = $post['UserCreateForm']['password'];
-                $repassword = $post['UserCreateForm']['repassword'];
-
-                if ($newUserRoles) {
-                    foreach ($newUserRoles as $r) {
+            if ($model->roles || $model->password || $model->repassword)
+                if ($model->roles) {
+                    foreach ($model->roles as $r) {
                         if (!in_array($r, $uroles)) {
                             $role = $auth->getRole($r);
                             $auth->assign($role, $userId);
                         };
                         foreach ($uroles as $oldrole) {
-                            if (!in_array($oldrole, $newUserRoles)) {
+                            if (!in_array($oldrole, $model->roles)) {
                                 $role = $auth->getRole($oldrole);
                                 $auth->revoke($role, $userId);
                             };
@@ -272,17 +366,15 @@ class AdminController extends Controller
                         $auth->revoke($role, $userId);
                     }
                 }
-                if ($password and $repassword) {
-                    if ($password = $repassword) {
-                        $user->password = $password;
-                        $user->save();
 
-                    }
-                }
-
-                $this->redirect(['users']);
-
+            if ($model->password === $model->repassword) {
+                $user->password = $model->password;
+                $user->save();
             }
+
+            $this->redirect(['users']);
+
+
             if (isset($post['UserCreateForm']['phone'])) {
                 $newPhonePost = $post['UserCreateForm']['phone'];
                 $userPhone = Phone::findOne(['userid' => $userId, 'phone' => $newPhonePost]);
@@ -326,6 +418,30 @@ class AdminController extends Controller
         return $this->render('userCreate', compact('model'));
     }
 
+    public function actionDelUser()
+    {
+        $userId = Yii::$app->request->get('id');
+        if ($userId) {
+            $user = User::findOne(['id' => $userId]);
+            if ($user) {
+                if($user->username !== 'admin'){
+                    $auth = Yii::$app->authManager;
+                    $userRoles = $auth->getAssignments($userId);
+                    foreach ($userRoles as $r) {
+                        // return print_r( $role);
+                        $role = $auth->getRole($r->roleName);
+                        $auth->revoke($role, $userId);
+                    }
+                    $user->delete();
+                }else{return "Учетную запись администратора системы удалять нельзя";}
+
+            }
+
+
+        }
+        $this->redirect(['users']);
+    }
+
     public function actionDelPhone()
     {
         if (Yii::$app->request->get('id')) {
@@ -343,6 +459,27 @@ class AdminController extends Controller
 
 
     }
+
+    public function  actionLdap(){
+
+        $model = new LdapForm();
+
+        if($model->load(Yii::$app->request->post()) && $model->validate()){
+            $ldap= new Ldap();
+            $ldap->account_suffix=$model->account_suffix;
+            $ldap->hosts= $model->hosts;
+            $ldap->base_dn= $model->base_dn;
+            $ldap->username= $model->username;
+            $ldap->password= $model->password;
+            $ldap->turnon= $model->turnon;
+            $ldap->save();
+        }
+
+
+
+        return $this->render('ldap', compact('model',));
+    }
+
 
 
 }
