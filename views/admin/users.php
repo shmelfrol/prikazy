@@ -2,10 +2,17 @@
 use yii\helpers\Url;
 
 ?>
-<div style="margin-bottom: 5px">
+<div style="margin-top: 20px">
     <a href="<?php echo Url::toRoute('/admin'); ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
 </div>
-<h1>Пользователи</h1>
+<div style="margin-top: 15px; margin-bottom: 15px">
+    <h1 style="font-weight: bold; font-size: 25px; float: left; margin-right: 10px">Пользователи</h1>
+    <div>
+        <a href="<?php echo Url::toRoute('add-user'); ?>"
+           style="font-size: 20px; text-decoration: none; text-align: center;  background-color: #0a73bb; color: white; padding-bottom: 8px; padding-top: 5px; padding-left: 10px; padding-right: 10px; border-radius: 5px"><?php echo "+" ?></a>
+    </div>
+</div>
+
 <div class="table-responsive">
     <table class="table table-bordered">
 
@@ -42,7 +49,4 @@ use yii\helpers\Url;
         <?php endforeach ?>
         </tbody>
     </table>
-</div>
-<div style="margin-bottom: 5px">
-    <a href="<?php echo Url::toRoute('add-user'); ?>" class="btn btn-danger"><?php echo "Добавить нового пользователя" ?></a>
 </div>

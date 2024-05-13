@@ -6,6 +6,8 @@ $db = require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'basic',
+    'defaultRoute' => 'prikaz',
+    'name' => 'Приказы',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
@@ -54,7 +56,7 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
            // 'enableStrictParsing' => true,
-//            'showScriptName' => false,
+            'showScriptName' => false,
 //            'rules' => [
 //                ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
 //            ],
@@ -77,6 +79,7 @@ $config = [
 
     ],
     'params' => $params,
+
 ];
 
 if (YII_ENV_DEV) {

@@ -5,10 +5,12 @@ namespace app\controllers;
 
 
 use app\models\CreateRoleForm;
+use app\models\Index;
+use app\models\IndexCreateForm;
 use app\models\Ldap;
 use app\models\LdapForm;
-use app\models\LdapLoginForm;
 use app\models\Phone;
+use app\models\Prikaz;
 use app\models\RoleBase;
 use app\models\UpdatePermissionForm;
 use app\models\UpdateRoleForm;
@@ -18,9 +20,9 @@ use app\models\UserCreateForm;
 use app\models\UserUpdateForm;
 use Yii;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
-use function Symfony\Component\Finder\name;
+use function Codeception\Lib\all;
+
 
 class AdminUrl
 {
@@ -53,23 +55,29 @@ class AdminController extends Controller
         $roles = new AdminUrl();
         $roles->url = 'roles';
         $roles->name = "Роли";
-        $roles->img = '../../web/images/roles.png';
+        $roles->img = '/images/roles.png';
 
         $permissions = new AdminUrl();
         $permissions->url = 'permissions';
         $permissions->name = "Разрешения";
-        $permissions->img = '../../web/images/perms.png';
+        $permissions->img = '/images/perms.png';
 
         $users = new AdminUrl();
         $users->url = 'users';
         $users->name = "Пользователи";
-        $users->img = '../../web/images/users.png';
-        $urls = [$roles, $permissions, $users];
+        $users->img = '/images/users.png';
+
 
         $ldap = new AdminUrl();
         $ldap->url = 'ldap';
         $ldap->name = "LDAP";
-        $ldap->img = '../../web/images/users.png';
+        $ldap->img = '/images/users.png';
+
+
+//        $indexes = new AdminUrl();
+//        $indexes->url = 'indexes';
+//        $indexes->name = "Индексы Приказов";
+//        $indexes->img = '/images/users.png';
         $urls = [$roles, $permissions, $users, $ldap];
 
         //$urls = ["roles" => "Роли", "permissions" => "Разрешения", "users" => "Пользователи"];
@@ -480,6 +488,63 @@ class AdminController extends Controller
         return $this->render('ldap', compact('model',));
     }
 
+
+
+    public function actionIndexes(){
+
+        $indexes=Index::find()->all();
+        return $this->render('indexes', compact('indexes'));
+    }
+
+
+    public function actionAddIndex(){
+        $model = new IndexCreateForm();
+
+
+        if(Yii::$app->request->isPost){
+            $post=Yii::$app->request->post();
+            $model->load($post);
+            if (!$model->validate()) {
+                var_dump($model->getErrors());
+                die();
+            }
+
+            if(!$model->isold){
+                $model->isold=false;
+            }
+            $indx= new Index();
+            $indx->symbol=$model->symbol;
+            $indx->description=$model->description;
+            $indx->isold=$model->isold;
+            $indx->created_at= $time=time();
+            $currentUser=Yii::$app->user->id;
+            $indx->created_by=$currentUser;
+            $indx->isold=$model->isold;
+            $indx->save();
+
+            $this->redirect(['indexes']);
+        }
+
+        return $this->render('addIndex', compact('model'));
+    }
+
+    public function actionDelIndex($id){
+
+        if($id){
+          $index=Index::findOne($id);
+          if($index){
+              $prikazez=Prikaz::find()->where(['index_id'=>$id])->all();
+              if(!$prikazez){
+                  $index->delete();
+
+              }
+          }
+
+        }
+
+        $this->redirect(['indexes']);
+
+    }
 
 
 }

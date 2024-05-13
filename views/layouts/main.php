@@ -32,16 +32,19 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <header id="header">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => '<img src="/images/Logowhite.png" class="img-responsive" style="width: 50px; height: 50px;"/>Приказы КубГТУ',
+//        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
+//            ['label' => 'Home', 'url' => ['/site/index']],
+//            ['label' => 'About', 'url' => ['/site/about']],
+//            ['label' => 'Contact', 'url' => ['/site/contact']],
+//            ['label' => 'Приказы', 'url' => ['/prikaz']],
+            ['label' => 'Избранное', 'url' => ['/prikaz/myfav']],
             Yii::$app->user->can('admin') ?['label' => 'Админка', 'url' => ['/admin']]: '',
             Yii::$app->user->isGuest
                 ? ['label' => 'Login', 'url' => ['/site/login']]
@@ -76,6 +79,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
         </div>
     </div>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" crossorigin="anonymous"></script>
 </footer>
 
 <?php $this->endBody() ?>

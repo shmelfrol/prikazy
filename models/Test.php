@@ -10,4 +10,7 @@ class Test extends ActiveRecord
     {
         return '{{test}}';
     }
+
+
+
 }

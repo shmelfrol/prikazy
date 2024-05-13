@@ -3,7 +3,7 @@
 use yii\helpers\Url;
 
 ?>
-<div>
+<div style="margin-top: 20px">
     <a href="<?php echo Url::toRoute('/admin'); ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
 </div>
 <div style="margin-top: 15px; margin-bottom: 15px">
