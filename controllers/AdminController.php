@@ -68,17 +68,17 @@ class AdminController extends Controller
         $users->img = '/images/users.png';
 
 
-        $ldap = new AdminUrl();
-        $ldap->url = 'ldap';
-        $ldap->name = "LDAP";
-        $ldap->img = '/images/users.png';
+//        $ldap = new AdminUrl();
+//        $ldap->url = 'ldap';
+//        $ldap->name = "LDAP";
+//        $ldap->img = '/images/users.png';
 
 
-//        $indexes = new AdminUrl();
-//        $indexes->url = 'indexes';
-//        $indexes->name = "Индексы Приказов";
-//        $indexes->img = '/images/users.png';
-        $urls = [$roles, $permissions, $users, $ldap];
+        $indexes = new AdminUrl();
+        $indexes->url = 'indexes';
+        $indexes->name = "Индексы Приказов";
+        $indexes->img = '/images/users.png';
+        $urls = [$roles, $permissions, $users, $indexes];
 
         //$urls = ["roles" => "Роли", "permissions" => "Разрешения", "users" => "Пользователи"];
 

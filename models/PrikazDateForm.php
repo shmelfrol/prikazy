@@ -10,11 +10,13 @@ class PrikazDateForm extends Model
 {
    public $year;
    public $month;
+   public $text;
 
     public function rules()
     {
         return [
             [['year', 'month'], 'required'],
+            [['text'], 'safe']
         ];
     }
 

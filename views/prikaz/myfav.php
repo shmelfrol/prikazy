@@ -78,13 +78,6 @@ $this->registerJS($script);
         <div style="display: inline-block; text-align: center"><a href="<?php echo Url::toRoute(["view", 'id' => $p->id]); ?>"><img src="/images/kubstu.png" width="64" height="64"></a></div>
         <div style="display: inline-block; text-align: center; font-size: large; font-weight: bold;  width: 100px; "><?php echo $p->numc; ?> <?php echo $p->symbol; ?></div>
         <div style="display: inline-block; text-align: center; font-size: medium; " class="name"><?php echo $p->text; ?></div>
-        <a style="text-decoration: none; color:black; position: absolute; right: 4px"
-           href="<?php echo Url::toRoute(["del", 'id' => $p->id]); ?>">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                 class="bi bi-trash-fill" viewBox="0 0 16 16">
-                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-            </svg>
-        </a>
         <p style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: -15px;left: 177px; ">
             <?php echo Yii::$app->formatter->asDate($p->reldate,'php:d.m.Y');?></p>
         <div style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: 7px;left: 115px; " xmlns="http://www.w3.org/2000/svg">

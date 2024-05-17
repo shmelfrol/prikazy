@@ -4,7 +4,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
-    <div>
+    <div style="margin-top: 20px">
         <a href="<?php echo Url::toRoute('/admin/permissions'); ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
     </div>
     <p></p>
