@@ -78,6 +78,11 @@ $config = [
             ]
 
     ],
+    'modules' => [
+        'logging' => [
+            'class' => 'app\modules\logging\logging',
+        ],
+    ],
     'params' => $params,
 
 ];

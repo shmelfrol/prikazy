@@ -14,7 +14,8 @@ Thumbs.db
 
 # composer vendor dir
 /vendor
-
+/prikazes
+/oldprikazy
 # composer itself is not needed
 composer.phar
 

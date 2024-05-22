@@ -34,11 +34,8 @@ $this->registerJS($script);
 
 
 ?>
-    <div style="margin-top: 20px">
-        <a href="<?php echo Url::to(['/prikaz', 'year'=>$y, 'month'=>$m]) ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
-    </div>
-    <p></p>
 
+<?php echo \app\components\BackButtonWidget::widget(['url'=> (Url::to(['/prikaz', 'year'=>$y, 'month'=>$m]))]) ?>
 
 <?php if($error!=""): ?>
     <div class="alert alert-danger" role="alert">
@@ -104,6 +101,14 @@ $this->registerJS($script);
 <iframe src="<?php echo Url::toRoute(["read", 'id' => $p->id]); ?>" frameborder="0" class="pdf" ></iframe>
 
 </div>
+<?php endif; ?>
+
+
+<?php if(Yii::$app->user->can('admin') === true): ?>
+<?php if($p->edit_info !== null) : ?>
+<h4>История изменений:</h4>
+<div style="padding: 5px; border-radius: 5px; background-color: wheat"><?php echo  $p->edit_info; ?></div>
+<?php endif; ?>
 <?php endif; ?>
 
 <style>

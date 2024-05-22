@@ -3,16 +3,7 @@ use yii\helpers\Url;
 ?>
 
 
-
-
-
-
-
-<div style="margin-top: 20px">
-    <a href="<?php echo Yii::$app->request->referrer; ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
-</div>
-<p></p>
-
+<?php echo \app\components\BackButtonWidget::widget([]) ?>
 
 <h4><?php if(!empty($p->index->symbol)){ echo $p->numc." ".$p->index->symbol." ".$p->text;} else {echo $p->numc." ".$p->text;}  ; ?></h4>
 <?php if($ext !== "pdf") : ?>
@@ -20,9 +11,8 @@ use yii\helpers\Url;
 
         <?= yii\helpers\Html::a('Прикрепленный файл', ['prikaz/download', 'filename' => $p->filename ], [
             'class' => 'btn btn-warning',
-            'style' =>[
-
-            ]]) ?>
+            'style' =>[]
+        ]) ?>
     </div>
 
 <?php else: ?>

@@ -24,14 +24,12 @@ class UserUpdateForm extends \yii\base\Model
             ['roles', 'checkIsArray'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
-            ['phone', 'match', 'pattern' => '/^\+7\s\([0-9]{3}\)\s[0-9]{2}\-[0-9]{3}\-[0-9]{2}$/', 'message' => 'Телефона, должно быть в формате +7(XXX)XX-XXX-XX'],
         ];
     }
 
     public function save()
     {
         if ($this->validate()) {
-
             CreateUser($this->username, $this->password);
         }
     }

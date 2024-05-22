@@ -73,12 +73,16 @@ class AdminController extends Controller
 //        $ldap->name = "LDAP";
 //        $ldap->img = '/images/users.png';
 
+        $log = new AdminUrl();
+        $log->url = '/logging';
+        $log->name = 'Логирование';
+        $log->img = '/images/logs.png';
 
         $indexes = new AdminUrl();
         $indexes->url = 'indexes';
         $indexes->name = "Индексы Приказов";
-        $indexes->img = '/images/users.png';
-        $urls = [$roles, $permissions, $users, $indexes];
+        $indexes->img = '/images/indexes.png';
+        $urls = [$roles, $permissions, $users, $indexes, $log];
 
         //$urls = ["roles" => "Роли", "permissions" => "Разрешения", "users" => "Пользователи"];
 
@@ -223,7 +227,9 @@ class AdminController extends Controller
             }
             // теперь можно удалить роль
             $auth->remove($role);
-        }else{ return "Роль администратора системы нельзя удалять";}
+        } else {
+            return "Роль администратора системы нельзя удалять";
+        }
         $this->redirect(['roles']);
 
     }
@@ -285,17 +291,18 @@ class AdminController extends Controller
 
     }
 
-    public function actionDelPermission(){
+    public function actionDelPermission()
+    {
         $name = Yii::$app->request->get('name');
         $auth = Yii::$app->authManager;
         $perm = $auth->getPermission($name);
-        if($perm){
-            $allRoles=$auth->getRoles();
+        if ($perm) {
+            $allRoles = $auth->getRoles();
             //сначала во всех ролях убираем связь с разрешением
-            foreach ($allRoles as $r){
-                $permsByRole= $auth->getPermissionsByRole($r->name);
-                foreach ($permsByRole as $p){
-                    if($p->name === $name){
+            foreach ($allRoles as $r) {
+                $permsByRole = $auth->getPermissionsByRole($r->name);
+                foreach ($permsByRole as $p) {
+                    if ($p->name === $name) {
                         $auth->removeChild($r, $p);
                         return "ok";
                     }
@@ -354,26 +361,27 @@ class AdminController extends Controller
         $model->roles = $uroles;
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            if ($model->roles || $model->password || $model->repassword)
-                if ($model->roles) {
-                    foreach ($model->roles as $r) {
-                        if (!in_array($r, $uroles)) {
-                            $role = $auth->getRole($r);
-                            $auth->assign($role, $userId);
-                        };
-                        foreach ($uroles as $oldrole) {
-                            if (!in_array($oldrole, $model->roles)) {
-                                $role = $auth->getRole($oldrole);
-                                $auth->revoke($role, $userId);
-                            };
-                        }
-                    }
-                } else {
+
+
+            if (!empty($model->roles)) {
+                foreach ($model->roles as $r) {
+                    if (!in_array($r, $uroles)) {
+                        $role = $auth->getRole($r);
+                        $auth->assign($role, $userId);
+                    };
                     foreach ($uroles as $oldrole) {
-                        $role = $auth->getRole($oldrole);
-                        $auth->revoke($role, $userId);
+                        if (!in_array($oldrole, $model->roles)) {
+                            $role = $auth->getRole($oldrole);
+                            $auth->revoke($role, $userId);
+                        };
                     }
                 }
+            } else {
+                foreach ($uroles as $oldrole) {
+                    $role = $auth->getRole($oldrole);
+                    $auth->revoke($role, $userId);
+                }
+            }
 
             if ($model->password === $model->repassword) {
                 $user->password = $model->password;
@@ -382,34 +390,10 @@ class AdminController extends Controller
 
             $this->redirect(['users']);
 
-
-            if (isset($post['UserCreateForm']['phone'])) {
-                $newPhonePost = $post['UserCreateForm']['phone'];
-                $userPhone = Phone::findOne(['userid' => $userId, 'phone' => $newPhonePost]);
-                if ($userPhone) {
-                    if ($newPhonePost != $userPhone->phone) {
-                        $newPhone = new Phone();
-                        $newPhone->phone = $post['UserCreateForm']['phone'];
-                        $newPhone->userid = $userId;
-                        $newPhone->save();
-                    } else {
-                        $message = "такой номер уже есть";
-                    }
-                } else {
-                    $newPhone = new Phone();
-                    $newPhone->phone = $post['UserCreateForm']['phone'];
-                    $newPhone->userid = $userId;
-                    $newPhone->save();
-                }
-
-
-            }
-
         }
-        $userPhones = Phone::find(['userid' => $userId])->all();
 
 
-        return $this->render('userUpdate', compact('userId', 'model', 'user', 'roles', 'userRoles', 'userPhones', 'message'));
+        return $this->render('userUpdate', compact('userId', 'model', 'user', 'roles', 'userRoles', 'message'));
     }
 
 
@@ -432,7 +416,7 @@ class AdminController extends Controller
         if ($userId) {
             $user = User::findOne(['id' => $userId]);
             if ($user) {
-                if($user->username !== 'admin'){
+                if ($user->username !== 'admin') {
                     $auth = Yii::$app->authManager;
                     $userRoles = $auth->getAssignments($userId);
                     foreach ($userRoles as $r) {
@@ -441,7 +425,9 @@ class AdminController extends Controller
                         $auth->revoke($role, $userId);
                     }
                     $user->delete();
-                }else{return "Учетную запись администратора системы удалять нельзя";}
+                } else {
+                    return "Учетную запись администратора системы удалять нельзя";
+                }
 
             }
 
@@ -468,58 +454,59 @@ class AdminController extends Controller
 
     }
 
-    public function  actionLdap(){
+    public function actionLdap()
+    {
 
         $model = new LdapForm();
 
-        if($model->load(Yii::$app->request->post()) && $model->validate()){
-            $ldap= new Ldap();
-            $ldap->account_suffix=$model->account_suffix;
-            $ldap->hosts= $model->hosts;
-            $ldap->base_dn= $model->base_dn;
-            $ldap->username= $model->username;
-            $ldap->password= $model->password;
-            $ldap->turnon= $model->turnon;
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $ldap = new Ldap();
+            $ldap->account_suffix = $model->account_suffix;
+            $ldap->hosts = $model->hosts;
+            $ldap->base_dn = $model->base_dn;
+            $ldap->username = $model->username;
+            $ldap->password = $model->password;
+            $ldap->turnon = $model->turnon;
             $ldap->save();
         }
-
 
 
         return $this->render('ldap', compact('model',));
     }
 
 
+    public function actionIndexes()
+    {
 
-    public function actionIndexes(){
-
-        $indexes=Index::find()->all();
+        $indexes = Index::find()->all();
         return $this->render('indexes', compact('indexes'));
     }
 
 
-    public function actionAddIndex(){
+    public function actionAddIndex()
+    {
         $model = new IndexCreateForm();
 
 
-        if(Yii::$app->request->isPost){
-            $post=Yii::$app->request->post();
+        if (Yii::$app->request->isPost) {
+            $post = Yii::$app->request->post();
             $model->load($post);
             if (!$model->validate()) {
                 var_dump($model->getErrors());
                 die();
             }
 
-            if(!$model->isold){
-                $model->isold=false;
+            if (!$model->isold) {
+                $model->isold = false;
             }
-            $indx= new Index();
-            $indx->symbol=$model->symbol;
-            $indx->description=$model->description;
-            $indx->isold=$model->isold;
-            $indx->created_at= $time=time();
-            $currentUser=Yii::$app->user->id;
-            $indx->created_by=$currentUser;
-            $indx->isold=$model->isold;
+            $indx = new Index();
+            $indx->symbol = $model->symbol;
+            $indx->description = $model->description;
+            $indx->isold = $model->isold;
+            $indx->created_at = $time = time();
+            $currentUser = Yii::$app->user->id;
+            $indx->created_by = $currentUser;
+            $indx->isold = $model->isold;
             $indx->save();
 
             $this->redirect(['indexes']);
@@ -528,17 +515,18 @@ class AdminController extends Controller
         return $this->render('addIndex', compact('model'));
     }
 
-    public function actionDelIndex($id){
+    public function actionDelIndex($id)
+    {
 
-        if($id){
-          $index=Index::findOne($id);
-          if($index){
-              $prikazez=Prikaz::find()->where(['index_id'=>$id])->all();
-              if(!$prikazez){
-                  $index->delete();
+        if ($id) {
+            $index = Index::findOne($id);
+            if ($index) {
+                $prikazez = Prikaz::find()->where(['index_id' => $id])->all();
+                if (!$prikazez) {
+                    $index->delete();
 
-              }
-          }
+                }
+            }
 
         }
 

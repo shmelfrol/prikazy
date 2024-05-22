@@ -3,16 +3,12 @@
 use yii\helpers\Url;
 ?>
 
-<div style="margin-top: 20px">
-    <a href="<?php echo Url::toRoute('/admin'); ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
-</div>
-<div style="margin-top: 15px; margin-bottom: 15px">
-    <h1 style="font-weight: bold; font-size: 25px; float: left; margin-right: 10px">Разрешения</h1>
-    <div>
-        <a href="<?php echo Url::toRoute('add-permission'); ?>"
-           style="font-size: 20px; text-decoration: none; text-align: center;  background-color: #0a73bb; color: white; padding-bottom: 8px; padding-top: 5px; padding-left: 10px; padding-right: 10px; border-radius: 5px"><?php echo "+" ?></a>
-    </div>
-</div>
+<?php echo \app\components\BackButtonWidget::widget(['url'=>Url::toRoute('/admin')]) ?>
+<?php echo \app\components\PageTitle::widget([ 'url'=>Url::toRoute('add-permission'),'title' =>'Разрешения']) ?>
+
+
+
+
 <div class="row " style="padding: 8px">
     <?php foreach ($perms as $perm): ?>
         <div class="col-sm-6 col-md-4 card" style=" border-radius: 5px; box-shadow: 5px 5px 5px 1px grey; margin: 5px; position: relative; :hover {

@@ -4,10 +4,7 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 ?>
-    <div>
-        <a href="<?php echo Url::toRoute('/admin'); ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
-    </div>
-    <p></p>
+<?php echo \app\components\BackButtonWidget::widget([]) ?>
 
 <?php $form = ActiveForm::begin(); ?>
 

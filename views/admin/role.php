@@ -5,19 +5,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 
-    <div style="margin-top: 20px">
-        <a href="<?php echo Url::toRoute('/admin/roles'); ?>" class="btn btn-success">&#8592; <?php echo "Назад" ?></a>
-    </div>
-
-<?php
-
-
-
-
-?>
-
-
-
+<?php echo \app\components\BackButtonWidget::widget([]) ?>
 
 <?php $form = ActiveForm::begin(); ?>
 
