@@ -34,7 +34,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     <?php
     NavBar::begin([
-        'brandLabel' => '<img src="/images/Logowhite.png" class="img-responsive" style="width: 50px; height: 50px;"/> Приказы КубГТУ',
+        'brandLabel' => '<img src="/images/Logowhite.png" class="img-responsive" style="width: 50px; height: 50px;"/> Приказы',
 //        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
