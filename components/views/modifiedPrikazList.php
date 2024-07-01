@@ -335,7 +335,7 @@ $p->status_name="1111";
     }
 
     .input-label {
-        background-color: white;
+        background-color: #e6ffea;
         color: white;
         padding: 5px;
         border-radius: 5px;
