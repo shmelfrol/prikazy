@@ -9,6 +9,9 @@ use yii\widgets\ActiveForm;
 
 $script = <<< JS
 let input=document.getElementById("prikazcreateform-file");
+
+
+
 var delIcon = document.getElementById("del-file");
 var inputdiv = document.getElementById("add-file");
 var file = document.getElementById("file");
@@ -26,126 +29,113 @@ var inputFunction = function(){
         filename = this.files[0].name;
         fileNameDiv.textContent=filename;
 }
+
+
+let params = (new URL(document.location)).searchParams;
+console.log(params.get('id'));
 delIcon.addEventListener('click', myFunction, false);
 
 input.addEventListener('change', inputFunction, false);
-
-
-
 
 
 JS;
 $this->registerJS($script);
 
 
-
 ?>
 
-<?php echo \app\components\BackButtonWidget::widget(['url'=> (Url::to(['/prikaz', 'year'=>$y, 'month'=>$m]))]) ?>
-
-<?php if($error!=""): ?>
+<?php echo \app\components\BackButtonWidget::widget(['url' => (Url::to(['/prikaz', 'year' => $y, 'month' => $m]))]) ?>
+<div style="padding: 5px; background-color: white; border: grey; border-radius: 5px; margin: 5px"></div>
+<?php if ($error != ""): ?>
     <div class="alert alert-danger" role="alert">
         <?php echo $error; ?>
     </div>
 <?php endif; ?>
 
-<h4><?php if(!empty($p->index->symbol)){ echo $p->numc." ".$p->index->symbol." ".$p->text;} else {echo $p->numc." ".$p->text;}  ; ?></h4>
-<?php $form = ActiveForm::begin(['options'=>['enctype'=> 'multipart/form-data']]); ?>
 
 
-<?= $form->field($model, 'text', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control']])->label('Название')?>
+
+<?php echo \app\components\PrikazTitle::widget(['p'=>$p]); ?>
+
+<?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+
+
+<?= $form->field($model, 'text', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control']])->label('Название') ?>
 <div hidden="true" id="add-file">
-    <?= $form->field($model, 'file')->fileInput(['class'=>'input-prikaz', 'accept'=>'application/pdf'])->label("<div style='display: inline-block;'>Выберите новый файл</div><div style='display: inline-block;'><img src='/images/upload_white.png' style='width: 40px; height: 25px' /> </div>", ['class'=>'input-label']) ?>
+    <?= $form->field($model, 'file')->fileInput(['class' => 'input-prikaz', 'accept' => 'application/pdf'])->label("<div style='display: inline-block;'>Выберите новый файл</div><div style='display: inline-block;'><img src='/images/upload_white.png' style='width: 40px; height: 25px' /> </div>", ['class' => 'input-label']) ?>
     <div id="uploadedfile"></div>
 </div>
 
 <p></p>
 
 
-
 <p></p>
 <p></p>
-
 
 
 <div class="form-group">
-    <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary', 'accept'=>["application/pdf"]]) ?>
+    <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary', 'accept' => ["application/pdf"]]) ?>
 </div>
-
 
 
 <?php ActiveForm::end(); ?>
 
-<?php if($ext !== "pdf") : ?>
-<div style="margin-top: 20px; display: inline-block;" id="file" >
+<?php if ($ext !== "pdf") : ?>
+    <div style="margin-top: 20px; display: inline-block;" id="file">
 
-    <?= yii\helpers\Html::a('Прикрепленный файл', ['prikaz/download', 'filename' => $file ], [
+        <?= yii\helpers\Html::a('Прикрепленный файл', ['prikaz/download', 'filename' => $file], [
             'class' => 'btn btn-warning',
-        'style' =>[
+            'style' => [
 
-    ]]) ?>
+            ]]) ?>
 
 
-    <a style="text-decoration: none; color:black;" id="del-file" href="#">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-             class="bi bi-trash-fill" viewBox="0 0 16 16">
-            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-        </svg>
-    </a>
-</div>
+        <a style="text-decoration: none; color:black;" id="del-file" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                 class="bi bi-trash-fill" viewBox="0 0 16 16">
+                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+            </svg>
+        </a>
+    </div>
 
 <?php else: ?>
-<div id="file" style="position: relative">
-    <a style="text-decoration: none; color:black; position: absolute; right: 11px; top: -25px" id="del-file" href="#" >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-             class="bi bi-trash-fill" viewBox="0 0 16 16">
-            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-        </svg>
-    </a>
+    <div id="file" style="position: relative">
+        <a style="text-decoration: none; color:black; position: absolute; right: 11px; top: -25px" id="del-file"
+           href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                 class="bi bi-trash-fill" viewBox="0 0 16 16">
+                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+            </svg>
+        </a>
 
-  <p></p>
+        <p></p>
 
-<iframe src="<?php echo Url::toRoute(["read", 'id' => $p->id]); ?>" frameborder="0" class="pdf" ></iframe>
+        <iframe src="<?php echo Url::toRoute(["read", 'id' => $p->id]); ?>" frameborder="0" class="pdf"></iframe>
 
-</div>
+    </div>
 <?php endif; ?>
 
 
-<?php if(Yii::$app->user->can('admin') === true): ?>
-<?php if($p->edit_info !== null) : ?>
-<h4>История изменений:</h4>
-<div style="padding: 5px; border-radius: 5px; background-color: wheat"><?php echo  $p->edit_info; ?></div>
+
+<?php echo \app\components\ModifiedPrikazListWidget::widget(['p'=>$p, 'indexes'=>$items, 'canceled'=>$canceled, 'modified'=>$modified, 'canceling'=>$canceling, 'modifing'=>$modifing, 'update'=>true]) ?>
+
+<?php if (Yii::$app->user->can('admin') === true): ?>
+    <?php if ($p->edit_info !== null) : ?>
+
+        <h4>История изменений:</h4>
+        <div style="padding: 5px; border-radius: 5px; background-color: wheat"><?php echo $p->edit_info; ?></div>
+    <?php endif; ?>
 <?php endif; ?>
-<?php endif; ?>
+
 
 <style>
     .pdf {
-        width:100%;
+        width: 100%;
         height: 500px;
-
-
-
-    }
-    .input-prikaz {
-        width: 0.1px;
-        height: 0.1px;
-        opacity: 0;
-        overflow: hidden;
-        position: absolute;
-        z-index: -1;
-    }
-    .input-label {
-        background-color: #157347;
-        color: white;
-        padding: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-
     }
 
-    .input-label:hover {
-        background-color:saddlebrown;
 
-    }
+
+
 </style>
 
