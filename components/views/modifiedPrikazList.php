@@ -150,10 +150,15 @@ var addPrikazes = function(e){
    
         console.log(children[i])
         if(children[i].classList.contains('prikaz-numc')){
-            children[i].innerHTML=res.symbol;
+            children[i].innerHTML=res.numc+" "+res.symbol;
         }
      if(children[i].classList.contains('prikaz-cancel')){
             children[i].href="/prikaz/del-modified?modified_prikaz_id="+res.id+"&prikaz_id="+prikaz_id+"&action_id="+action_id;
+        }
+     if(children[i].classList.contains('prikaz-image')){
+         let img_href = children[i].querySelector('.prikaz-link');
+          console.log(img_href);
+          img_href.href='http://prikazy/prikaz/view?id='+res.id;
         }
      if(children[i].classList.contains('prikaz-reldate')){
             children[i].innerHTML=res.reldate;
@@ -242,7 +247,7 @@ $p->status_name="1111";
     <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceled, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>false, 'action_id'=>'2']); ?>
 </div>
 <?php endif; ?>
-<?php if(!$update && !empty($modified)): ?>
+<?php if(!$update && !empty($canceled)): ?>
     <h4 style="margin-top: 20px;">Приказ отменяет следующие документы: </h4>
     <div id="cancel-prikazes">
         <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceled, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>false, 'action_id'=>'2']); ?>
