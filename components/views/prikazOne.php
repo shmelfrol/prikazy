@@ -3,6 +3,12 @@
 use yii\helpers\Url;
 
 /* @var $prikazes array */
+/* @var  $hidden  boolean*/
+/* @var  $btndel  boolean*/
+/* @var  $btncancel  boolean*/
+/* @var  $btnedit  boolean*/
+/* @var  $heart  boolean*/
+/* @var  $action_id  integer*/
 
 
 
@@ -11,7 +17,7 @@ use yii\helpers\Url;
 ?>
     <div class="prikaz-box" <?php  echo $hidden ? 'hidden id="prikaz-hidden"': ''; ?>>
         <div class="prikaz-image">
-            <a class="prikaz-link" href="<?php echo Url::toRoute(["view", 'id' => $p->id]); ?>"><img src="/images/kubstu.png" width="64" height="64"></a>
+            <a class="prikaz-link" href="<?php echo Url::toRoute(["view", 'id' => $p->id]); ?>"><img src="/images/kubstu.png" width="64" height="64" alt="prikaz logo"></a>
         </div>
         <div class="prikaz-numc"><?php echo $p->numc; ?> <?php echo $p->symbol; ?></div>
         <div class="prikaz-reldate"><?php echo Yii::$app->formatter->asDate($p->reldate, 'php:d.m.Y'); ?></div>
@@ -42,14 +48,12 @@ use yii\helpers\Url;
 
         <?php endif; ?>
          <?php endif; ?>
-        <p class="prikaz-status" style="text-decoration: none; color:black; font-size: 10px; position: absolute; bottom: -11px;left: 177px; background-color: <?php echo $p->color; ?>; padding: 3px 5px 3px 5px; border-radius: 8px; color: white">
+        <p class="prikaz-status" style="text-decoration: none; font-size: 10px; position: absolute; bottom: -11px;left: 177px; background-color: <?php echo $p->color; ?>; padding: 3px 5px 3px 5px; border-radius: 8px; color: white">
            <?php echo $p->status_name; ?>
         </p>
         <?php if($heart): ?>
-        <div style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: 7px;left: 102px; "
-             xmlns="http://www.w3.org/2000/svg">
-            <img class="heart" id="<?php echo $p->id; ?>"
-                 src="<?php echo $p->prikaz_id ? "/images/heart.png" : "/images/heart2.png"; ?>" width="20" height="20">
+        <div style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: 7px;left: 102px; "xmlns="http://www.w3.org/2000/svg">
+            <img class="heart" id="<?php echo $p->id; ?>" alt="heart" src="<?php echo $p->prikaz_id ? "/images/heart.png" : "/images/heart2.png"; ?>" width="20" height="20" />
         </div>
         <?php endif; ?>
     </div>
