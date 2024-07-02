@@ -34,7 +34,7 @@ use yii\helpers\Url;
             </td>
             <td></td>
             <td style="width: 1%; white-space: nowrap;">
-                <a href="<?php echo Url::toRoute(["user-update", 'id'=> $u->id]); ?>" style="text-decoration: none; margin-right: 10px"  role="button">	&#9998;</a>
+                <?php echo \app\components\PencilWidget::widget(['url'=>'user-update', 'params'=>['id'=>$u->id]]) ?>
                 <a href="<?php echo Url::toRoute(["del-user", 'id'=> $u->id]); ?>" style="text-decoration: none"  role="button">	&#10060;</a>
             </td>
         </tr>

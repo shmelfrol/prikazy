@@ -5,7 +5,11 @@ use yii\helpers\Url;
 
 <?php echo \app\components\BackButtonWidget::widget([]) ?>
 
-<h4><?php if(!empty($p->index->symbol)){ echo $p->numc." ".$p->index->symbol." ".$p->text;} else {echo $p->numc." ".$p->text;}  ; ?></h4>
+
+
+
+<?php echo \app\components\PrikazTitle::widget(['p'=>$p]); ?>
+
 <?php if($ext !== "pdf") : ?>
     <div style="margin-top: 20px; display: inline-block;" id="file" >
 
@@ -22,6 +26,7 @@ use yii\helpers\Url;
     </div>
 <?php endif; ?>
 
+<?php echo \app\components\ModifiedPrikazListWidget::widget(['p'=>$p, 'canceled'=>$canceled, 'modified'=>$modified, 'canceling'=>$canceling, 'modifing'=>$modifing, 'update'=>false]) ?>
 
 
 <style>
