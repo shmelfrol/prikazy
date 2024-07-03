@@ -236,7 +236,7 @@ $p->status_name="1111";
 </div>
 <?php endif; ?>
 
-<?php echo \app\components\PrikazOneWidget::widget(['p'=>$p, 'btndel'=>false, 'btnedit'=>false, 'heart'=>false, 'hidden'=>true, 'btncancel'=>true]) ?>
+<?php echo \app\components\PrikazOneWidget::widget(['p'=>$p, 'btndel'=>false, 'btnedit'=>false, 'heart'=>true, 'hidden'=>true, 'btncancel'=>true]) ?>
 
 <?php if($update): ?>
 <h4 style="margin-top: 20px;">
@@ -244,13 +244,15 @@ $p->status_name="1111";
     <a href="#" class="btn btn-success" id="btn-add-cancel" name="2">Добавить</a>
 </h4>
 <div id="cancel-prikazes">
-    <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceled, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>false, 'action_id'=>'2']); ?>
+    <?php if(!empty($canceled)): ?>
+    <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceled, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>true, 'action_id'=>'2']); ?>
+    <?php endif; ?>
 </div>
 <?php endif; ?>
 <?php if(!$update && !empty($canceled)): ?>
     <h4 style="margin-top: 20px;">Приказ отменяет следующие документы: </h4>
     <div id="cancel-prikazes">
-        <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceled, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>false, 'action_id'=>'2']); ?>
+        <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceled, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>true, 'action_id'=>'2']); ?>
     </div>
 <?php endif; ?>
 
@@ -260,25 +262,27 @@ $p->status_name="1111";
     Приказ изменяет следующие документы: <a href="#" class="btn btn-success" id="btn-add-edit" name="1">Добавить</a>
 </h4>
 <div id="mod-prikazes">
-    <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$modified, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>false, 'action_id'=>'2']); ?>
+    <?php if(!empty($modified)): ?>
+    <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$modified, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>true, 'action_id'=>'2']); ?>
+    <?php endif; ?>
 </div>
 <?php endif; ?>
 <?php if(!$update && !empty($modified)): ?>
     <h4 style="margin-top: 20px">Приказ изменяет следующие документы:</h4>
     <div id="mod-prikazes">
-        <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$modified, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>false, 'action_id'=>'2']); ?>
+        <?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$modified, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>$update? true: false, 'heart'=>true, 'action_id'=>'2']); ?>
     </div>
 <?php endif; ?>
 
 
 <?php if(!empty($modifing)): ?>
 <h4>Приказ изменён следующими документами:</h4>
-<?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$modifing, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>false, 'heart'=>false, 'action_id'=>'2']); ?>
+<?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$modifing, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>false, 'heart'=>true, 'action_id'=>'2']); ?>
 <?php endif; ?>
 
 <?php if(!empty($canceling)): ?>
 <h4>Приказ отменён следующими документами:</h4>
-<?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceling, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>false, 'heart'=>false, 'action_id'=>'2']); ?>
+<?php echo \app\components\PrikazListWidget::widget(['prikazes'=>$canceling, 'btndel'=>false, 'btnedit'=>false, 'btncancel'=>false, 'heart'=>true, 'action_id'=>'2']); ?>
 <?php endif; ?>
 
 
