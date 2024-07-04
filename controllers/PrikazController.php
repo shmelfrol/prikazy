@@ -11,6 +11,7 @@ use app\models\Prikaz;
 use app\models\PrikazCreateForm;
 use app\models\PrikazSearch;
 use yii\base\ErrorException;
+use yii\base\Exception;
 use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -51,42 +52,13 @@ class PrikazController extends Controller
 
     public function actionIndex($year = null, $month = null, $text = null)
     {
-        $years = [];
-        for ($i = 2000; $i <= Date('Y'); $i++) {
-            $years[$i] = $i;
-        }
-        $years[9999] = 'Все';
-        $months = [
-            '99' => 'Все',
-            '1' => 'Январь',
-            '2' => 'Февраль',
-            '3' => 'Март',
-            '4' => 'Апрель',
-            '5' => 'Май',
-            '6' => 'Июнь',
-            '7' => 'Июль',
-            '8' => 'Август',
-            '9' => 'Сентябрь',
-            '10' => 'Октябрь',
-            '11' => 'Ноябрь',
-            '12' => 'Декабрь',
-        ];
-
-
 
         $searchModel = new PrikazSearch();
-        $searchModel->month=$month;
-        $searchModel->year=$year;
-
         $dataProvider = $searchModel->search($this->request->queryParams);
-
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'years'=>$years,
-            'months'=>$months
-
         ]);
 
     }
@@ -138,26 +110,18 @@ class PrikazController extends Controller
         $indexes = Index::find()->all();
         $items = ArrayHelper::map($indexes, 'id', 'symbol');
 
-        $modifing =$p->getPrikazesModifiedThisPrikaz(STATUS_P_MODIFIED);
-
+        $modifing = $p->getPrikazesModifiedThisPrikaz(STATUS_P_MODIFIED);
         //приказы которые отменили данный приказ
-        $canceling =$p->getPrikazesModifiedThisPrikaz(STATUS_P_CANCELED);
-
+        $canceling = $p->getPrikazesModifiedThisPrikaz(STATUS_P_CANCELED);
         // canceled prikazes by this prikaz
-        $canceled=$p->getPrikazesModifiedByThis(STATUS_P_CANCELED);
-
+        $canceled = $p->getPrikazesModifiedByThis(STATUS_P_CANCELED);
         // modified prikazes by this prikaz
-        $modified=$p->getPrikazesModifiedByThis(STATUS_P_MODIFIED);
-
-
+        $modified = $p->getPrikazesModifiedByThis(STATUS_P_MODIFIED);
 
         $model = new PrikazCreateForm();
-        $re = '/\.[A-Z,a-z]{3,4}/m';
-        $ext = '';
-        if (preg_match($re, $p->filename, $matches)) {
-            $ext = strtolower($matches[0]);
-            $ext = str_replace('.', '', $ext);
-        }
+
+        $ext = $p->getFileExtension();
+
         $pData = Yii::$app->formatter->asDate($p->reldate, 'php:d-m-Y');
         $y = date('Y', $p->reldate);
         $m = date('m', $p->reldate);
@@ -199,7 +163,7 @@ class PrikazController extends Controller
         }
 
 
-        $indexes = Index::find()->where(['isold'=>false])->all();
+        $indexes = Index::find()->where(['isold' => false])->all();
         $items = ArrayHelper::map($indexes, 'id', 'symbol',);
         $error = '';
 
@@ -218,7 +182,7 @@ class PrikazController extends Controller
     {
 
         $p = Prikaz::findOne($id);
-        if($p->delPrikaz()){
+        if ($p->delPrikaz()) {
             return $this->redirect(Yii::$app->request->referrer);
         }
 
@@ -226,25 +190,19 @@ class PrikazController extends Controller
     }
 
 
-
     public function actionView($id)
     {
         $p = Prikaz::findOne($id);
         //приказы которые отменили данный приказ
-        $modifing =$p->getPrikazesModifiedThisPrikaz(STATUS_P_MODIFIED);
+        $modifing = $p->getPrikazesModifiedThisPrikaz(STATUS_P_MODIFIED);
         //приказы которые отменили данный приказ
-        $canceling =$p->getPrikazesModifiedThisPrikaz(STATUS_P_CANCELED);
+        $canceling = $p->getPrikazesModifiedThisPrikaz(STATUS_P_CANCELED);
         // canceled prikazes by this prikaz
-        $canceled=$p->getPrikazesModifiedByThis(STATUS_P_CANCELED);
+        $canceled = $p->getPrikazesModifiedByThis(STATUS_P_CANCELED);
         // modified prikazes by this prikaz
-        $modified=$p->getPrikazesModifiedByThis(STATUS_P_MODIFIED);
+        $modified = $p->getPrikazesModifiedByThis(STATUS_P_MODIFIED);
 
-        $ext = '';
-        $re = '/\.[A-Z,a-z]{3,4}/m';
-        if (preg_match($re, $p->filename, $matches)) {
-            $ext = strtolower($matches[0]);
-            $ext = str_replace('.', '', $ext);
-        }
+        $ext = $p->getFileExtension();
 
 
         return $this->render('view', compact('p', 'ext', 'modifing', 'canceling', 'canceled', 'modified'));
@@ -271,7 +229,7 @@ class PrikazController extends Controller
             //readfile( $filepath);
 
         } else {
-            print_r("rhrh");
+            throw new Exception('файл приказа не найден');
         }
     }
 
@@ -279,17 +237,12 @@ class PrikazController extends Controller
     {
 
         if ($id) {
-            //return json_encode("yes".$id);
-            $user_id = Yii::$app->user->identity->getId();
-            $fOld = Favorite::findOne(["prikaz_id" => $id, 'user_id' => $user_id]);
-            if (empty($fOld)) {
-                $f = new Favorite();
-                $f->prikaz_id = $id;
-                $f->user_id = $user_id;
-                $f->save();
+            $p = Prikaz::findOne($id);
+            if ($p->addToFavorite()) {
                 return json_encode('ok');
+            } else {
+                return json_encode('error');
             }
-
         }
 
     }
@@ -298,19 +251,12 @@ class PrikazController extends Controller
     {
 
         if ($id) {
-            //return json_encode("yes".$id);
-            $user_id = Yii::$app->user->identity->getId();
-            $fOld = Favorite::findOne(["prikaz_id" => $id, 'user_id' => $user_id]);
-            if (!empty($fOld)) {
-                try {
-                    $fOld->delete();
-                    return json_encode('ok');
-                } catch (StaleObjectException $e) {
-                } catch (\Throwable $e) {
-                }
-
+            $p = Prikaz::findOne($id);
+            if ($p->removeFromFavorite()) {
+                return json_encode('ok');
+            } else {
+                return json_encode('error');
             }
-
         }
 
     }
@@ -398,48 +344,28 @@ class PrikazController extends Controller
 
     public function actionModifiedPrikaz($prikaz_id, $modified_prikaz_id, $action_id)
     {
-        //ищем модификации произведенные данным приказом над модифицируемом приказом
-        $existed_actions = ModifiedPrikaz::find()->where(['prikaz_id' => $prikaz_id, 'modified_prikaz_id' => $modified_prikaz_id])->all();
+       $p=Prikaz::findOne($prikaz_id);
+        $mod_p=$p->modifiedPrikaz($modified_prikaz_id, $action_id);
+       if(!empty($mod_p)){
+           $text=$mod_p->text;
+           if ($text > 100) {
+               $text = substr($text, 0, 99);
+           }
+           $oneP = [
+               'id' => $mod_p->id,
+               'symbol' => $mod_p->index->symbol,
+               'numc' => $mod_p->numc,
+               'text' => $text,
+               'reldate' => Yii::$app->formatter->asDate($mod_p->reldate, 'php:d.m.Y'),
+               'action_id' => $mod_p->action_id,
+               'color' => $mod_p->status->color,
+               'status' => $mod_p->status->status_name
+           ];
 
-
-        //ищем был ли отменен приказ другими приказами
-        $existed_actions_by_an_p = ModifiedPrikaz::find()->where(['modified_prikaz_id' => $modified_prikaz_id, 'action_id' => '2'])->all();
-        //если данный приказ не производил действий над модифицируемым приказом и другие приказы не отменяли модифициуемый приказ, то можно его модифициоровать любым способом
-        if (empty($existed_actions) && empty($existed_actions_by_an_p)) {
-            $action = new ModifiedPrikaz();
-            $action->prikaz_id = $prikaz_id;
-            $action->modified_prikaz_id = $modified_prikaz_id;
-            $action->action_id = $action_id;
-            if ($action->save()) {
-                $mod_p = Prikaz::findOne($modified_prikaz_id);
-                $mod_p->action_id = $action_id;
-                $mod_p->modified_by_p_id = $prikaz_id;
-                $text = $mod_p->text;
-                if ($mod_p->save()) {
-                    if ($text > 100) {
-                        $text = substr($text, 0, 99);
-                    }
-
-                    $oneP = [
-                        'id' => $mod_p->id,
-                        'symbol' => $mod_p->index->symbol,
-                        'numc' => $mod_p->numc,
-                        'text' => $text,
-                        'reldate' => Yii::$app->formatter->asDate($mod_p->reldate, 'php:d.m.Y'),
-                        'action_id' => $mod_p->action_id,
-                        'color' => $mod_p->status->color,
-                        'status' => $mod_p->status->status_name
-                    ];
-
-                    return json_encode($oneP);
-                }
-
-
-            }
-
-        } else {
-            return json_encode('not');
-        }
+           return json_encode($oneP);
+       }else {
+           return json_encode('not');
+       }
 
 
     }
@@ -453,36 +379,19 @@ class PrikazController extends Controller
         if ($path === '/prikaz/update') {
             parse_str($parts['query'], $query);
             $prikaz_id = $query['id'];
-            //Ищем запись о совершаемом действии над модифицируемом приказом ($modified_prikaz_id) в таблице ModifiedPrikaz
-            // если запись найдена то удаляем ее - затем ищем последнюю запись о модификации этого приказа и в соответствии с ней проставляем статус приказа
-            $modified_prikaz = ModifiedPrikaz::findOne(['prikaz_id' => $prikaz_id, 'modified_prikaz_id' => $modified_prikaz_id]);
-            if (!empty($modified_prikaz)) {
-                if ($modified_prikaz->delete()) {
-                    //ищем модификацию приказа другими приказами
-                    $p = Prikaz::findOne(['id' => $modified_prikaz_id]);
-                    $mod_p_by_an_p = ModifiedPrikaz::findOne(['modified_prikaz_id' => $modified_prikaz_id]);
-                    if (!empty($mod_p_by_an_p)) {
-                        $p->action_id = $mod_p_by_an_p->action_id;
-                        $p->modified_by_p_id = $mod_p_by_an_p->prikaz_id;
-                    } else {
-                        $p->action_id = 3;
-                        $p->modified_by_p_id = null;
-                    }
+           $p=Prikaz::findOne($prikaz_id);
 
-                    if ($p->save()) {
-                        return $this->redirect(Yii::$app->request->referrer);
-                    }
-
-
-                } else {
-                    return 'error';
-                }
+           if($p->cancelModifiing($modified_prikaz_id)){
+               return $this->redirect(Yii::$app->request->referrer);
+           }else{
+               throw new Exception('не удалось отменить изменение');
+           }
 
             }
         }
 
 
-    }
+
 
 
 }

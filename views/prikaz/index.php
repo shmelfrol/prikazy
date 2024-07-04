@@ -23,9 +23,10 @@ $this->registerJsFile('@web/js/fav.js',
 <div class="document-index">
     <?php echo \app\components\PageTitle::widget([ 'url'=>Url::toRoute('create'),'title' =>'Приказы']) ?>
 
-    <p><?php print_r($searchModel->month." ".$searchModel->year) ?></p>
+
     <?php Pjax::begin(); ?>
-    <?php echo $this->render('_search', ['model' => $searchModel, 'years'=>$years, 'months'=>$months]); ?>
+    <p><?php echo $searchModel->month." ".$searchModel->year?></p>
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,

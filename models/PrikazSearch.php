@@ -14,6 +14,40 @@ class PrikazSearch extends Prikaz
 {
     public $year;
     public $month;
+    public $months;
+    public $years;
+
+
+
+    public function init()
+    {
+        parent::init();
+       $this->months= [
+           '99' => 'Все',
+           '1' => 'Январь',
+           '2' => 'Февраль',
+           '3' => 'Март',
+           '4' => 'Апрель',
+           '5' => 'Май',
+           '6' => 'Июнь',
+           '7' => 'Июль',
+           '8' => 'Август',
+           '9' => 'Сентябрь',
+           '10' => 'Октябрь',
+           '11' => 'Ноябрь',
+           '12' => 'Декабрь',
+       ];
+
+        $years = [];
+        for ($i = 2000; $i <= Date('Y'); $i++) {
+            $years[$i] = $i;
+        }
+        $years[9999] = 'Все';
+        $this->years=$years;
+
+
+    }
+
 
     /**
      * {@inheritdoc}
@@ -91,12 +125,16 @@ class PrikazSearch extends Prikaz
         if($this->month=== null){
             $this->month='99';
         }
+
+
         if ($this->month === '99') {
             $month1 = '01';
             $month2 = '12';
         }
 
+
         if ($this->year === null) {
+            $this->year=Date('Y');
             $y1 = Date('Y');
             $y2 = Date('Y');
         }

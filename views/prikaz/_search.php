@@ -21,8 +21,8 @@ use yii\widgets\ActiveForm;
     ]); ?>
 
     <?= $form->field($model, 'text', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control']])->label('Название')?>
-    <?php echo $form->field($model, 'year')->dropDownList($years)->label('Год'); ?>
-    <?php echo $form->field($model, 'month')->dropDownList($months)->label("Месяц"); ?>
+    <?php echo $form->field($model, 'year')->dropDownList($model->years)->label('Год'); ?>
+    <?php echo $form->field($model, 'month')->dropDownList($model->months)->label("Месяц"); ?>
 
     <?php //$form->field($model, 'id') ?>
 

@@ -59,13 +59,19 @@ class Prikaz extends ActiveRecord
     }
 
 
-    public function getNewNameForDeletedPrikaz()
+    public function getFileExtension()
     {
         $re = '/\.[A-Z,a-z]{3,4}/m';
         if (preg_match($re, $this->filename, $matches)) {
             $ext = strtolower($matches[0]);
-            $ext = str_replace('.', '', $ext);
+            return $ext = str_replace('.', '', $ext);
         }
+
+    }
+
+    public function getNewNameForDeletedPrikaz()
+    {
+        $ext = $this->getFileExtension();
 
         $timestamp = $this->reldate;
         $y = date('Y', $timestamp);
@@ -157,7 +163,7 @@ class Prikaz extends ActiveRecord
                 ['prikaz_id' => $this->id],
                 ['modified_prikaz_id' => $this->id]])->all();
         //Нужно удалить все записи
-        if(!empty($modifiedStringsByThisPrikaz)){
+        if (!empty($modifiedStringsByThisPrikaz)) {
             foreach ($modifiedStringsByThisPrikaz as $string) {
                 if (!$string->delete()) {
                     throw new Exception('не удаляется строка');
@@ -167,10 +173,10 @@ class Prikaz extends ActiveRecord
 
     }
 
-
+//пересчитать статус приказа
     public function recalculateStatus()
     {
-        //ищем последний приказ который изменил $this
+        //ищем последний приказ, который совершил изменяемое дейтвие над $this
         $mod_p_by_an_p = ModifiedPrikaz::findOne(['modified_prikaz_id' => $this->id]);
         if (!empty($mod_p_by_an_p)) {
             $this->action_id = $mod_p_by_an_p->action_id;
@@ -179,8 +185,114 @@ class Prikaz extends ActiveRecord
             $this->action_id = 3;
             $this->modified_by_p_id = null;
         }
-        $this->save();
+        if($this->save()){
+            return true;
+        }else{ return false;}
     }
+
+    public function addToFavorite()
+    {
+        $user_id = Yii::$app->user->identity->getId();
+        $fOld = Favorite::findOne(["prikaz_id" => $this->id, 'user_id' => $user_id]);
+        if (empty($fOld)) {
+            $f = new Favorite();
+            $f->prikaz_id = $this->id;
+            $f->user_id = $user_id;
+            if (!$f->save()) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+
+    public function removeFromFavorite()
+    {
+        $user_id = Yii::$app->user->identity->getId();
+        $fOld = Favorite::findOne(["prikaz_id" => $this->id, 'user_id' => $user_id]);
+        if (!empty($fOld)) {
+            try {
+                if ($fOld->delete()) {
+                    return true;
+                }
+
+            } catch (StaleObjectException $e) {
+            } catch (\Throwable $e) {
+            }
+
+        }
+        return false;
+    }
+
+
+    public function modifiedPrikaz($modified_prikaz_id, $action_id)
+    {
+
+        //ищем модификации произведенные данным приказом над модифицируемом приказом
+        $existed_actions = ModifiedPrikaz::find()
+            ->where([
+                'prikaz_id' => $this->id,
+                'modified_prikaz_id' => $modified_prikaz_id
+            ])
+            ->all();
+
+        //ищем был ли отменен приказ другими приказами
+        $existed_actions_by_an_p = ModifiedPrikaz::find()
+            ->where([
+                'modified_prikaz_id' => $modified_prikaz_id,
+                'action_id' => '2'])
+            ->all();
+
+        if (empty($existed_actions) && empty($existed_actions_by_an_p)) {
+            $action = new ModifiedPrikaz();
+            $action->prikaz_id = $this->id;
+            $action->modified_prikaz_id = $modified_prikaz_id;
+            $action->action_id = $action_id;
+            if ($action->save()) {
+                $mod_p = Prikaz::findOne($modified_prikaz_id);
+                $mod_p->action_id = $action_id;
+                $mod_p->modified_by_p_id = $this->id;
+                if ($mod_p->save()) {
+                  return $mod_p;
+                }
+            }
+
+        }else {
+            return null;
+        }
+
+
+
+
+
+    }
+
+
+    public function cancelModifiing($modified_prikaz_id){
+        //приказ над которым было произведено изменение
+        $mp=Prikaz::findOne(['id' => $modified_prikaz_id]);
+        //Ищем запись о совершаемом действии над модифицируемом приказом ($modified_prikaz_id) в таблице ModifiedPrikaz
+        // если запись найдена то удаляем ее - затем ищем последнюю запись о модификации этого приказа и в соответствии с ней проставляем статус приказа
+        $modified_prikaz = ModifiedPrikaz::findOne([
+            'prikaz_id' => $this->id,
+            'modified_prikaz_id' => $modified_prikaz_id]
+        );
+        if (!empty($modified_prikaz)) {
+            if ($modified_prikaz->delete()) {
+                //пересчитываем статус приказа
+                if($mp->recalculateStatus()){
+                    return true;
+                }else{ return false;}
+
+
+            } else {
+                return false;
+            }
+
+        }
+
+    }
+
 
 
 }
