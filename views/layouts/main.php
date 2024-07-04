@@ -46,7 +46,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 //            ['label' => 'About', 'url' => ['/site/about']],
 //            ['label' => 'Contact', 'url' => ['/site/contact']],
 //            ['label' => 'Приказы', 'url' => ['/prikaz']],
-            ['label' => 'Избранное', 'url' => ['/prikaz/myfav']],
+            ['label' => "Избранное &#9734;", 'url' => ['/prikaz/myfav'], 'encode' => false],
             Yii::$app->user->can('admin') ?['label' => 'Админка', 'url' => ['/admin']]: '',
             Yii::$app->user->isGuest
                 ? ['label' => 'Login', 'url' => ['/site/login']]

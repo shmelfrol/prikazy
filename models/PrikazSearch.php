@@ -39,10 +39,10 @@ class PrikazSearch extends Prikaz
        ];
 
         $years = [];
-        for ($i = 2000; $i <= Date('Y'); $i++) {
+        for ($i = Date('Y'); $i >=2000 ; $i--) {
             $years[$i] = $i;
         }
-        $years[9999] = 'Все';
+        $years[99] = 'Все';
         $this->years=$years;
 
 
@@ -74,6 +74,11 @@ class PrikazSearch extends Prikaz
         return Model::scenarios();
     }
 
+    //В результате переопределения этого метода url не будет содержать имя модели
+    public function formName()
+    {
+        return '';
+    }
     /**
      * Creates data provider instance with search query applied
      *
@@ -106,6 +111,9 @@ class PrikazSearch extends Prikaz
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 200, // говоришь системе мне нужно вывести 20 записей
+            ]
         ]);
 
         $this->load($params);

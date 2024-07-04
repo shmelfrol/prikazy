@@ -1,9 +1,17 @@
 <?php
 use yii\helpers\Url;
+
+
+$this->registerJsFile('@web/js/fav.js',
+    [
+        'position' => $this::POS_END
+    ]
+);
+
 ?>
 
 
-<?php echo \app\components\BackButtonWidget::widget([]) ?>
+<?php echo \app\components\BackButtonWidget::widget(['url' => (Url::to(['/prikaz', 'year' => $y, 'month' => $m]))]) ?>
 
 
 

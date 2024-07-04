@@ -106,7 +106,13 @@ class PrikazController extends Controller
     public function actionUpdate($id)
     {
         $currentUser = Yii::$app->user;
-        $p = Prikaz::findOne($id);
+
+        $p = getPrikaz($id);
+
+
+
+
+
         $indexes = Index::find()->all();
         $items = ArrayHelper::map($indexes, 'id', 'symbol');
 
@@ -192,7 +198,8 @@ class PrikazController extends Controller
 
     public function actionView($id)
     {
-        $p = Prikaz::findOne($id);
+        $p = getPrikaz($id);
+
         //приказы которые отменили данный приказ
         $modifing = $p->getPrikazesModifiedThisPrikaz(STATUS_P_MODIFIED);
         //приказы которые отменили данный приказ
@@ -203,9 +210,11 @@ class PrikazController extends Controller
         $modified = $p->getPrikazesModifiedByThis(STATUS_P_MODIFIED);
 
         $ext = $p->getFileExtension();
+        $y = date('Y', $p->reldate);
+        $m = date('m', $p->reldate);
 
 
-        return $this->render('view', compact('p', 'ext', 'modifing', 'canceling', 'canceled', 'modified'));
+        return $this->render('view', compact('p', 'ext', 'modifing', 'canceling', 'canceled', 'modified', 'y', 'm'));
     }
 
     public function actionRead($id)

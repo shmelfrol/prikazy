@@ -15,9 +15,9 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
-        'options' => [
-            'data-pjax' => 1
-        ],
+//        'action' => [
+//            \yii\helpers\Url::current(), ['year' => $model->year, 'month'=>$model->month],
+//        ]
     ]); ?>
 
     <?= $form->field($model, 'text', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control']])->label('Название')?>

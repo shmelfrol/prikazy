@@ -24,19 +24,44 @@ $this->registerJsFile('@web/js/fav.js',
     <?php echo \app\components\PageTitle::widget([ 'url'=>Url::toRoute('create'),'title' =>'Приказы']) ?>
 
 
-    <?php Pjax::begin(); ?>
-    <p><?php echo $searchModel->month." ".$searchModel->year?></p>
+
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'itemOptions' => ['class' => 'item'],
+
+
         'itemView' => function ($model, $key, $index, $widget) {
             // return Html::a(Html::encode($model->id), ['view', 'id' => $model->id]);
             return    \app\components\PrikazOneWidget::widget(['p' => $model, 'btndel' => true, 'btnedit' => true, 'btncancel' => false, 'heart' => true, 'action_id' => 1]) ;
         },
     ]) ?>
 
-    <?php Pjax::end(); ?>
+
 
 </div>
+
+<style>
+    .pagination {
+
+    }
+    .pagination li {
+      background-color: green;
+      margin: 2px;
+      padding: 4px;
+        border-radius: 2px;
+
+    }
+    .pagination li a {
+        font-size: large;
+        color: white;
+        text-decoration: none;
+    }
+    .pagination .active {
+        background-color: #0a73bb;
+    }
+
+
+
+</style>

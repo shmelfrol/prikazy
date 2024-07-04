@@ -1,11 +1,9 @@
 <?php
 
 use app\models\Favorite;
-use app\models\ModifiedPrikaz;
 use app\models\Prikaz;
 use yii\helpers\FileHelper;
-use yii\web\HttpException;
-use yii\web\UploadedFile;
+
 
 require_once dirname(__DIR__) . '/modules/logging/helpers/logs.php';
 
@@ -33,9 +31,33 @@ function CreatePrikazFolder($reldate)
     $dir = dirname(__DIR__) . '/prikazes/';
     // Если нет папки с годом создаем ее
     if (!is_dir($dir . '/' . $y)) {
-        FileHelper::createDirectory($dir . '/' . $y);
+        try {
+            FileHelper::createDirectory($dir . '/' . $y);
+        } catch (\yii\base\Exception $e) {
+            throw $e;
+        }
     }
 
+}
+
+function getPrikaz($id){
+    $user_id = Yii::$app->user->identity->getId();
+    $subQFav=Favorite::find()->where(['user_id'=>$user_id]);
+    return Prikaz::find()
+        ->select([
+            'prikaz.*',
+            'fav.prikaz_id',
+            "COALESCE(pi.symbol, '') as symbol",
+            "COALESCE(status.status_name, '') as status_name",
+            "COALESCE(status.color, '') as color",
+        ])
+        ->leftJoin(['pi' => "prikazindex"], 'pi.id=prikaz.index_id')
+        ->leftJoin(['fav' => $subQFav], 'fav.prikaz_id=prikaz.id')
+        ->leftJoin(['status' => "prikaz_action_type"], 'status.id=prikaz.action_id')
+        ->where(['is_del'=>false])
+        ->where(['prikaz.id'=>$id])
+        ->orderBy('id')
+        ->one();
 }
 
 

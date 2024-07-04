@@ -7,6 +7,13 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
+$this->registerJsFile('@web/js/fav.js',
+    [
+        'position' => $this::POS_END
+    ]
+);
+
+
 $script = <<< JS
 let input=document.getElementById("prikazcreateform-file");
 

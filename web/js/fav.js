@@ -5,7 +5,7 @@ var myFunction = function() {
     var src = this.getAttribute("src");
 
     let heart = document.getElementById(id);
-    if(src==="/images/heart2.png"){
+    if(src==="/images/star2.png"){
         let url="/prikaz/favorite?id=" + id;
         console.log(url);
         $.ajax({
@@ -18,14 +18,15 @@ var myFunction = function() {
                 let res=JSON.parse(data);
                 if(res==='ok'){
                     console.log("ok")
-                    heart.src="/images/heart.png"
+                   // heart.src="/images/heart.png"
+                    heart.src="/images/star.png"
                 }
             }
         })
     }
 
 
-    if(src==="/images/heart.png"){
+    if(src==="/images/star.png"){
         let url="/prikaz/delfav?id=" + id;
         console.log(url);
         $.ajax({
@@ -37,7 +38,7 @@ var myFunction = function() {
             success: function(data, textStatus, jqXHR) {
                 let res=JSON.parse(data);
                 if(res==='ok'){
-                    heart.src="/images/heart2.png"
+                    heart.src="/images/star2.png"
                 }
             }
         })

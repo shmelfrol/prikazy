@@ -53,12 +53,12 @@ use yii\helpers\Url;
         </p>
         <?php if($heart): ?>
         <div style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: 7px;left: 102px; "xmlns="http://www.w3.org/2000/svg">
-            <img class="heart" id="<?php echo $p->id; ?>" alt="heart" src="<?php echo $p->prikaz_id ? "/images/heart.png" : "/images/heart2.png"; ?>" width="20" height="20" />
+            <img class="heart" id="<?php echo $p->id; ?>" alt="heart" src="<?php echo $p->prikaz_id ? "/images/star.png" : "/images/star2.png"; ?>" width="20" height="20" />
         </div>
         <?php endif; ?>
     </div>
 
-
+<!--"/images/heart.png" : "/images/heart2.png"-->
 
 
 <style>
