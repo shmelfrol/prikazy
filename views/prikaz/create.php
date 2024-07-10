@@ -12,29 +12,6 @@ use yii\widgets\ActiveForm;
 
 
 
-$script = <<< JS
-let input=document.getElementById("prikazcreateform-file");
-
-
-var inputFunction = function(){
-    let countFiles = '';
-    let filename = '';
-    let fileNameDiv= document.getElementById("uploadedfile");
-        if (this.files && this.files.length >= 1)
-          countFiles = this.files.length;
-        filename = this.files[0].name;
-        fileNameDiv.textContent=filename;
-}
-
-
-input.addEventListener('change', inputFunction, false);
-
-
-
-
-
-JS;
-$this->registerJS($script);
 
 
 
@@ -68,12 +45,9 @@ $this->registerJS($script);
 
 <?= $form->field($model, 'text', ['labelOptions' => ['class' => 'text-last'], 'inputOptions' => ["class" => 'form-control']])->label('Название')?>
 
-<?//= $form->field($model, 'file')->fileInput() ?>
+<?php echo \app\components\InputFileWidget::widget(['model'=>$model, 'form'=>$form]) ?>
 
-<div id="add-file">
-    <?= $form->field($model, 'file')->fileInput(['class'=>'input-prikaz', 'accept'=>'application/pdf'])->label("<div style='display: inline-block;'>Выберите новый файл</div><div style='display: inline-block;'><img src='/images/upload_white.png' style='width: 40px; height: 25px' /> </div>", ['class'=>'input-label']) ?>
-    <div id="uploadedfile"></div>
-</div>
+
 
 
 
@@ -87,27 +61,4 @@ $this->registerJS($script);
 
 <?php ActiveForm::end(); ?>
 
-<style>
 
-    .input-prikaz {
-        width: 0.1px;
-        height: 0.1px;
-        opacity: 0;
-        overflow: hidden;
-        position: absolute;
-        z-index: -1;
-    }
-    .input-label {
-        background-color: #157347;
-        color: white;
-        padding: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-
-    }
-
-    .input-label:hover {
-        background-color:saddlebrown;
-
-    }
-</style>

@@ -82,7 +82,7 @@ class PrikazController extends Controller
             $index_id = Index::findOne($model->index_id);
             $fullFilePath = GetPrikazName($model->numc, $index_id->symbol, $model->reldate, $model->file->extension);
 
-            CreatePrikazFolder(strtotime($model->reldate));
+            CreatePrikazFolder($model->reldate);
 
             if (!is_file(dirname(__DIR__) . '/prikazes/' . $fullFilePath)) {
                 $model->file->saveAs(dirname(__DIR__) . '/prikazes/' . $fullFilePath);
@@ -110,9 +110,6 @@ class PrikazController extends Controller
         $p = getPrikaz($id);
 
 
-
-
-
         $indexes = Index::find()->all();
         $items = ArrayHelper::map($indexes, 'id', 'symbol');
 
@@ -132,9 +129,9 @@ class PrikazController extends Controller
         $y = date('Y', $p->reldate);
         $m = date('m', $p->reldate);
         $d = date('d', $p->reldate);
-        $model->reldate = $pData;
-        $model->numc = $p->numc;
-        $model->index_id = $p->index_id;
+
+       // $model->numc = $p->numc;
+//        $model->index_id = $p->index_id;
         $model->text = $p->text;
         $file = $p->filename;
 
@@ -148,15 +145,13 @@ class PrikazController extends Controller
 
 
             $model->file = UploadedFile::getInstance($model, 'file');
-            $index_id = Index::findOne($model->index_id);
-            $fullFilePath = GetPrikazName($model->numc, $index_id->symbol, $model->reldate, $ext);
+//            $index_id = Index::findOne($model->index_id);
+            $fullFilePath = GetPrikazName($p->numc, $p->symbol, $pData, $ext);
             if ($model->file) {
-                CreatePrikazFolder(strtotime($model->reldate));
-                if (is_file(dirname(__DIR__) . '/prikazes/' . $fullFilePath)) {
-                    unlink(dirname(__DIR__) . '/prikazes/' . $fullFilePath);
-                    if (!is_file(dirname(__DIR__) . '/prikazes/' . $fullFilePath)) {
-                        $model->file->saveAs(dirname(__DIR__) . '/prikazes/' . $fullFilePath);
-                    }
+                CreatePrikazFolder($pData);
+                        if($p->delFile()){
+                            $model->file->saveAs(dirname(__DIR__) . '/prikazes/' . $fullFilePath);
+                        }
                 }
             }
             if ($model->text !== $p->text) {
@@ -166,7 +161,7 @@ class PrikazController extends Controller
                 };
             }
             $p->save();
-        }
+
 
 
         $indexes = Index::find()->where(['isold' => false])->all();

@@ -26,7 +26,7 @@ function GetPrikazName($numc, $nums, $reldate, $fileExt)
 
 function CreatePrikazFolder($reldate)
 {
-    $timestamp = $reldate;
+    $timestamp = strtotime($reldate);
     $y = date('Y', $timestamp);
     $dir = dirname(__DIR__) . '/prikazes/';
     // Если нет папки с годом создаем ее

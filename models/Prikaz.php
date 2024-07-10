@@ -293,6 +293,12 @@ class Prikaz extends ActiveRecord
 
     }
 
+    public function delFile(){
+        if (is_file(dirname(__DIR__) . '/prikazes' . $this->filename)) {
+        return unlink(dirname(__DIR__) . '/prikazes' . $this->filename);
+        }
+    }
+
 
 
 }
