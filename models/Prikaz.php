@@ -13,6 +13,7 @@ class Prikaz extends ActiveRecord
     public $prikaz_id;
     public $status_name;
     public $color;
+    public $divisions;
 
 
     public static function tableName()
@@ -31,7 +32,7 @@ class Prikaz extends ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'numc', 'text', 'filename', 'index_id', 'cteated_at', 'created_by', 'reldate', 'symbol', 'prikaz_id'], 'safe'],
+            [['id', 'numc', 'text', 'filename', 'index_id', 'cteated_at', 'created_by', 'reldate', 'symbol', 'prikaz_id', 'divisions'], 'safe'],
         ];
     }
 

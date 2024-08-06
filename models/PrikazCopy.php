@@ -19,6 +19,7 @@ class PrikazCopy
     public $symbol;
     public $prikaz_id;
     public $status_name;
+    public $divisions;
 
 
 

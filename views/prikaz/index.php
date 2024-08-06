@@ -30,8 +30,6 @@ $this->registerJsFile('@web/js/fav.js',
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
         'itemOptions' => ['class' => 'item'],
-
-
         'itemView' => function ($model, $key, $index, $widget) {
             // return Html::a(Html::encode($model->id), ['view', 'id' => $model->id]);
             return    \app\components\PrikazOneWidget::widget(['p' => $model, 'btndel' => true, 'btnedit' => true, 'btncancel' => false, 'heart' => true, 'action_id' => 1]) ;

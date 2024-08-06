@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -15,7 +16,6 @@ $script = <<< JS
 let input=document.getElementById("prikazcreateform-file");
 
 
-
 var delIcon = document.getElementById("del-file");
 var inputdiv = document.getElementById("add-file");
 var file = document.getElementById("file");
@@ -25,9 +25,11 @@ inputdiv.hidden=false;
 }
 
 
+
 let params = (new URL(document.location)).searchParams;
-console.log(params.get('id'));
+
 delIcon.addEventListener('click', myFunction, false);
+
 
 JS;
 $this->registerJS($script);
@@ -44,6 +46,7 @@ $this->registerJS($script);
 <?php endif; ?>
 
 <?php echo \app\components\PrikazTitle::widget(['p'=>$p]); ?>
+<?php echo \app\components\ForDivisionsWidget::widget(['divisions'=>$divisions, 'checked_ids'=>$checked_ids, 'plus'=>true]) ?>
 
 <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
@@ -65,32 +68,20 @@ $this->registerJS($script);
             'style' => [
 
             ]]) ?>
-
-
-        <a style="text-decoration: none; color:black;" id="del-file" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                 class="bi bi-trash-fill" viewBox="0 0 16 16">
-                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-            </svg>
-        </a>
+        <?php echo \app\components\TrashIconWidget::widget([]); ?>
     </div>
-
 <?php else: ?>
     <div id="file" style="position: relative">
-        <a style="text-decoration: none; color:black; position: absolute; right: 11px; top: -25px" id="del-file"
-           href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                 class="bi bi-trash-fill" viewBox="0 0 16 16">
-                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-            </svg>
-        </a>
-
+        <div style="position: absolute; right: 11px; top: -25px" >
+           <?php echo \app\components\TrashIconWidget::widget([]); ?>
+        </div>
         <p></p>
-
         <iframe src="<?php echo Url::toRoute(["read", 'id' => $p->id]); ?>" frameborder="0" class="pdf"></iframe>
-
     </div>
 <?php endif; ?>
+
+
+
 
 
 

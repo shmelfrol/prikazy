@@ -13,15 +13,17 @@ use yii\helpers\Url;
 
 
 
-
 ?>
     <div class="prikaz-box" <?php  echo $hidden ? 'hidden id="prikaz-hidden"': ''; ?>>
         <div class="prikaz-image">
-            <a class="prikaz-link" href="<?php echo Url::toRoute(["view", 'id' => $p->id]); ?>"><img src="/images/kubstu.png" width="64" height="64" alt="prikaz logo"></a>
+            <a class="prikaz-link" href="<?php echo Url::toRoute(["view", 'id' => $p->id]); ?>"><img src="/images/prikaz.svg" width="64" height="64" alt="prikaz logo"></a>
         </div>
         <div class="prikaz-numc"><?php echo $p->numc; ?> <?php echo $p->symbol; ?></div>
         <div class="prikaz-reldate"><?php echo Yii::$app->formatter->asDate($p->reldate, 'php:d.m.Y'); ?></div>
-        <div style="display: inline-block" class="prikaz-name name"><?php echo $p->text; ?></div>
+        <div style="display: inline-block;" >
+            <div class="prikaz-name name"><?php echo $p->text; ?></div>
+        </div>
+
         <?php if($btndel === true):?>
         <?php if(Yii::$app->user->can('prikaz del') === true): ?>
             <a class="prikaz-del"
@@ -41,29 +43,52 @@ use yii\helpers\Url;
 
          <?php if($btnedit === true):?>
         <?php if(Yii::$app->user->can('prikaz create') === true): ?>
-             <div style="position: absolute; right: 4px; bottom: 7px;">
+             <div style="position: absolute; right: 8px; bottom: 5px;">
                  <?php echo \app\components\PencilWidget::widget(['url'=>'update', 'params'=>['id'=>$p->id]]) ?>
              </div>
-
-
         <?php endif; ?>
          <?php endif; ?>
-        <p class="prikaz-status" style="text-decoration: none; font-size: 10px; position: absolute; bottom: -11px;left: 177px; background-color: <?php echo $p->color; ?>; padding: 3px 5px 3px 5px; border-radius: 8px; color: white">
+        <div class="prikaz-status" style="background-color: <?php echo $p->color; ?>; ">
            <?php echo $p->status_name; ?>
-        </p>
+        </div>
         <?php if($heart): ?>
-        <div style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: 7px;left: 102px; "xmlns="http://www.w3.org/2000/svg">
+        <div style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: 5px;left: 102px;">
             <img class="heart" id="<?php echo $p->id; ?>" alt="heart" src="<?php echo $p->prikaz_id ? "/images/star.png" : "/images/star2.png"; ?>" width="20" height="20" />
         </div>
         <?php endif; ?>
+        <div style="position: absolute; bottom: 5px;left: 256px;">
+            <?php foreach ($divisions as $d): ?>
+              <?php echo \app\components\DivisionWidget::widget(['name'=>$d['name'], 'color'=>$d['color'], 'small'=>true]); ?>
+            <?php endforeach; ?>
+        </div>
+
+
+
     </div>
 
 <!--"/images/heart.png" : "/images/heart2.png"-->
 
 
 <style>
+    .prikaz-status {
+        text-decoration: none;
+        font-size: x-small;
+        position: absolute;
+        bottom: 5px;
+        left: 154px;
+        padding: 3px 5px 3px 5px;
+        border-radius: 4px;
+        color: white
+
+    }
+
+
+
+
     .prikaz-box {
-        padding: 5px;
+        display: flex;
+        align-items: center;
+        padding: 10px;
         box-shadow: 5px 5px 5px 1px grey;
         margin-bottom: 10px;
         margin-top: 5px;
@@ -94,7 +119,8 @@ use yii\helpers\Url;
         text-decoration: none;
         color:black;
         position: absolute;
-        right: 4px
+        right: 8px;
+        top: 5px;
     }
     .prikaz-cancel{
         text-decoration: none;
@@ -115,6 +141,7 @@ use yii\helpers\Url;
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 600px;
+        align-items: ;
 
     }
 

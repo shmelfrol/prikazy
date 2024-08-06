@@ -17,6 +17,8 @@ class PrikazOneWidget extends Widget
     public $heart;
     public $action_id;
 
+    public $divisions;
+
     public function init()
     {
         parent::init();
@@ -29,6 +31,26 @@ class PrikazOneWidget extends Widget
         if($this->btncancel === null){
             $this->btncancel= false;
         }
+        if($this->p->divisions){
+            if($this->divisions=== null){
+                if($this->p->divisions){
+                    $strings= explode(",",$this->p->divisions);
+                    $this->divisions=array_map([$this, 'divToArr'], $strings);
+                }
+            }
+        }else {
+            $this->divisions=[];
+        }
+
+    }
+
+    public function divToArr($str){
+        $division=[];
+        $name= substr($str, 0,strpos($str, '#') );
+        $color=substr($str, strpos($str, '#')  );
+        $division['color']=$color;
+        $division["name"]=$name;
+        return $division;
     }
 
 
@@ -43,7 +65,8 @@ class PrikazOneWidget extends Widget
             'btnedit'=> $this->btnedit,
             'heart'=>$this->heart,
             'btncancel'=>$this->btncancel,
-            'action_id'=>$this->action_id
+            'action_id'=>$this->action_id,
+            'divisions'=>$this->divisions
         ]);
     }
 

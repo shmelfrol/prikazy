@@ -7,6 +7,7 @@ namespace app\controllers;
 use app\models\ActionType;
 use app\models\ActionTypeUpdateForm;
 use app\models\CreateRoleForm;
+use app\models\Division;
 use app\models\Index;
 use app\models\IndexCreateForm;
 use app\models\Ldap;
@@ -70,6 +71,7 @@ class AdminController extends Controller
             ["url"=>'/logging', 'name'=>'Логирование', 'img'=>'/images/logs.png'],
             ["url"=>'indexes', 'name'=>'Индексы приказов', 'img'=>'/images/indexes.png'],
             ["url"=>'actions', 'name'=>'Статусы приказов', 'img'=>'/images/indexes.png'],
+            ["url"=>'divisions', 'name'=>'Подразделения', 'img'=>'/images/indexes.png'],
         ];
 
         return $this->render('index', compact('urls'));
@@ -545,7 +547,7 @@ class AdminController extends Controller
             return $this->render('actionUpdate', compact('model', 'actionType'));
   }
 
-  public function actionAddAction(){
+    public function actionAddAction(){
 
       $model= new ActionTypeUpdateForm();
       if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -562,5 +564,47 @@ class AdminController extends Controller
       return $this->render('actionAdd', compact('model'));
 
   }
+
+    public function actionDivisions(){
+        $divisions=Division::find()->all();
+
+
+        return $this->render('divisions', compact('divisions'));
+    }
+
+    public function  actionAddDivision(){
+
+        $model=new Division();
+        $currentUser = Yii::$app->user;
+        if($model->load(Yii::$app->request->post()) && $model->validate()){
+            $model->created_at=time();
+            $model->created_by = $currentUser->id;
+            if($model->save()){
+                $this->redirect(['divisions']);
+            };
+        }
+
+        return $this->render('division_add', compact('model'));
+    }
+
+    public function actionUpdateDivision($id){
+        $currentUser = Yii::$app->user;
+        $model=Division::findOne($id);
+
+
+        if($model->load(Yii::$app->request->post()) && $model->validate()){
+            $model->updated_at=time();
+            $model->updated_by = $currentUser->id;
+            if($model->save()){
+                $this->redirect(['divisions']);
+            };
+        }
+
+        return $this->render('division_update', compact('model'));
+
+
+
+    }
+
 
 }

@@ -89,18 +89,31 @@ class PrikazSearch extends Prikaz
     public function search($params)
     {
 
+        $qWith = PrikazDivision::find()
+            ->select([
+                'p.prikaz_id',
+              'string_agg(CONCAT(d.short_name, d.color), \',\' ORDER BY d.id) as divisions'
+            ])
+            ->from(['prikaz_division p'])
+            ->leftJoin(['d' => "division"], 'p.division_id=d.id')
+            ->groupBy('p.prikaz_id');
+//        print_r($qWith);
+//        die();
 
 
         $user_id = Yii::$app->user->identity->getId();
         $subQFav=Favorite::find()->where(['user_id'=>$user_id]);
         $query = Prikaz::find()
+
             ->select([
                 'prikaz.*',
                 'fav.prikaz_id',
                 "COALESCE(pi.symbol, '') as symbol",
                 "COALESCE(status.status_name, '') as status_name",
                 "COALESCE(status.color, '') as color",
+                "ps.divisions"
             ])
+            ->leftJoin(['ps' => $qWith], 'prikaz.id=ps.prikaz_id')
             ->leftJoin(['pi' => "prikazindex"], 'pi.id=prikaz.index_id')
             ->leftJoin(['fav' => $subQFav], 'fav.prikaz_id=prikaz.id')
             ->leftJoin(['status' => "prikaz_action_type"], 'status.id=prikaz.action_id')

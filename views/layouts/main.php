@@ -37,7 +37,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         'brandLabel' => '<img src="/images/Logowhite.png" class="img-responsive" style="width: 50px; height: 50px;"/> Приказы',
 //        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
+        'options' => ['class' => 'navbar-expand-md navbar-dark bg-navbar fixed-top']
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
@@ -88,3 +88,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 </body>
 </html>
 <?php $this->endPage() ?>
+<style>
+    .bg-navbar {
+        background-color: #0a53be;
+    }
+</style>

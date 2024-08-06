@@ -4,11 +4,13 @@
 namespace app\controllers;
 
 
+use app\models\Division;
 use app\models\Favorite;
 use app\models\Index;
 use app\models\ModifiedPrikaz;
 use app\models\Prikaz;
 use app\models\PrikazCreateForm;
+use app\models\PrikazDivision;
 use app\models\PrikazSearch;
 use yii\base\ErrorException;
 use yii\base\Exception;
@@ -37,7 +39,7 @@ class PrikazController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'actions' => ['create', 'update', 'del', "get-prikazes", "modified-prikaz", "del-modified"],
+                        'actions' => ['create', 'update', 'del', "get-prikazes", "modified-prikaz", "del-modified", "add-divisions"],
                         'roles' => ['admin', 'PrikazCreator', 'MainPrikazCreator'],
                     ],
                     [
@@ -167,9 +169,13 @@ class PrikazController extends Controller
         $indexes = Index::find()->where(['isold' => false])->all();
         $items = ArrayHelper::map($indexes, 'id', 'symbol',);
         $error = '';
+        $divisions = Division::find()->all();
+        $prikazDivisions = PrikazDivision::find()->where(['prikaz_id'=>$p->id])->all();
+        $checked_ids=ArrayHelper::map($prikazDivisions, 'division_id', 'division_id',);
+        $checkedDivisions = Division::find()->andWhere(['IN', 'division.id', $checked_ids])->all();
 
 
-        return $this->render('update', compact('model', 'p', 'items', 'error', 'file', 'ext', 'y', 'm', 'items', 'canceled', 'modified', 'canceling', 'modifing'));
+        return $this->render('update', compact('model', 'p', 'items', 'error', 'file', 'ext', 'y', 'm', 'items', 'canceled', 'modified', 'canceling', 'modifing', 'divisions', 'checked_ids', 'checkedDivisions'));
     }
 
     public function actionDownload($filename)
@@ -393,6 +399,41 @@ class PrikazController extends Controller
 
             }
         }
+
+    public function  actionAddDivisions($divisions, $prikazId)
+    {
+
+        $newDivisions = json_decode(urldecode($divisions));
+        $oldPrikazDivisions = ArrayHelper::map(PrikazDivision::find()->where(['prikaz_id' => $prikazId])->all(), 'division_id', 'division_id');
+        //return$prikazId;
+
+        try {
+            foreach ($newDivisions as $d) {
+                if (!in_array($d, $oldPrikazDivisions)) {
+                    $pd = new PrikazDivision();
+                    $pd->prikaz_id = $prikazId;
+                    $pd->division_id = $d;
+                    $pd->save();
+                }
+            }
+
+            foreach ($oldPrikazDivisions as $oldD){
+                if(!in_array($oldD, $newDivisions)){
+                    $oldPD=PrikazDivision::findOne(['prikaz_id'=>$prikazId, 'division_id'=>$oldD]);
+                    $oldPD->delete();
+                }
+            }
+
+            $divisions=ArrayHelper::map(Division::find()->andWhere(['IN','division.id', $newDivisions])->all(), 'short_name', 'color');
+            return json_encode($divisions);
+        }catch (\yii\db\Exception $e){
+            return $e;
+            return json_encode($e) ;
+        }
+
+
+
+    }
 
 
 
