@@ -48,12 +48,13 @@ use yii\helpers\Url;
              </div>
         <?php endif; ?>
          <?php endif; ?>
-        <div class="prikaz-status" style="background-color: <?php echo $p->color; ?>; ">
-           <?php echo $p->status_name; ?>
+        <div class="prikaz-status-div" >
+            <?php echo \app\components\PrikazStatusWidget::widget(['status_name'=>$p->status_name, 'small'=>true, 'color'=>$p->color]) ?>
+
         </div>
         <?php if($heart): ?>
-        <div style="text-decoration: none; color:black; font-size: small; position: absolute; bottom: 5px;left: 102px;">
-            <img class="heart" id="<?php echo $p->id; ?>" alt="heart" src="<?php echo $p->prikaz_id ? "/images/star.png" : "/images/star2.png"; ?>" width="20" height="20" />
+        <div style="position: absolute; bottom: 5px;left: 102px;">
+            <?php echo \app\components\FavIconWidget::widget(['p'=>$p]) ?>
         </div>
         <?php endif; ?>
         <div style="position: absolute; bottom: 5px;left: 256px;">
@@ -70,16 +71,10 @@ use yii\helpers\Url;
 
 
 <style>
-    .prikaz-status {
-        text-decoration: none;
-        font-size: x-small;
+    .prikaz-status-div {
         position: absolute;
         bottom: 5px;
         left: 154px;
-        padding: 3px 5px 3px 5px;
-        border-radius: 4px;
-        color: white
-
     }
 
 

@@ -38,15 +38,22 @@ $this->registerJS($script);
 ?>
 
 <?php echo \app\components\BackButtonWidget::widget(['url' => (Url::to(['/prikaz', 'year' => $y, 'month' => $m]))]) ?>
-<div style="padding: 5px; background-color: white; border: grey; border-radius: 5px; margin: 5px"></div>
+
 <?php if ($error != ""): ?>
     <div class="alert alert-danger" role="alert">
         <?php echo $error; ?>
     </div>
 <?php endif; ?>
 
+<div style="display: flex; align-items: center;justify-content: space-between">
+   <?php echo \app\components\PrikazStatusWidget::widget(['status_name'=>$p->status_name, 'color'=>$p->color]) ?>
+   <?php echo \app\components\ForDivisionsWidget::widget(['divisions'=>$divisions, 'checked_ids'=>$checked_ids, 'plus'=>true]) ?>
+   <?php echo \app\components\FavIconWidget::widget(['p'=>$p]) ?>
+
+</div>
+
 <?php echo \app\components\PrikazTitle::widget(['p'=>$p]); ?>
-<?php echo \app\components\ForDivisionsWidget::widget(['divisions'=>$divisions, 'checked_ids'=>$checked_ids, 'plus'=>true]) ?>
+
 
 <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
@@ -60,24 +67,10 @@ $this->registerJS($script);
 
 <?php ActiveForm::end(); ?>
 
-<?php if ($ext !== "pdf") : ?>
-    <div style="margin-top: 20px; display: inline-block;" id="file">
-
-        <?= yii\helpers\Html::a('Прикрепленный файл', ['prikaz/download', 'filename' => $file], [
-            'class' => 'btn btn-warning',
-            'style' => [
-
-            ]]) ?>
-        <?php echo \app\components\TrashIconWidget::widget([]); ?>
-    </div>
+<?php if ($ext !== "pdf" || isMobile()) : ?>
+    <?php echo \app\components\FileDownloadBtnWidget::widget(['file'=>$file, 'trashIcon'=>true]) ?>
 <?php else: ?>
-    <div id="file" style="position: relative">
-        <div style="position: absolute; right: 11px; top: -25px" >
-           <?php echo \app\components\TrashIconWidget::widget([]); ?>
-        </div>
-        <p></p>
-        <iframe src="<?php echo Url::toRoute(["read", 'id' => $p->id]); ?>" frameborder="0" class="pdf"></iframe>
-    </div>
+    <?php echo \app\components\FileIframePDFWidget::widget(['prikaz_id'=>$p->id, 'trashIcon'=>true]) ?>
 <?php endif; ?>
 
 
@@ -94,6 +87,7 @@ $this->registerJS($script);
         <div style="padding: 5px; border-radius: 5px; background-color: wheat"><?php echo $p->edit_info; ?></div>
     <?php endif; ?>
 <?php endif; ?>
+<?php echo $_SERVER["HTTP_USER_AGENT"] ?>
 
 
 <style>

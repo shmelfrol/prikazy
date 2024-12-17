@@ -6,6 +6,7 @@ $script = <<< JS
 let checkboxes=document.getElementsByName('divisions[]')
 let btnAddDivisions = document.getElementById('btn-add-divisions')
 let btnOpenModalDivisionList = document.getElementById('btn-open-modal-division-list')
+let btnCloseModalDivision = document.getElementById('btn-close-modal-division')
 
 
 
@@ -78,6 +79,7 @@ var openModalDivisionList = function (){
 
 btnAddDivisions.addEventListener('click', addDivisions, false)
 btnOpenModalDivisionList.addEventListener('click', openModalDivisionList, false)
+btnCloseModalDivision.addEventListener('click', openModalDivisionList, false)
 
 JS;
 $this->registerJS($script);
@@ -103,6 +105,7 @@ $this->registerJS($script);
 
 <div class="division-modal" id="division-modal" hidden>
     <div id="error_add_action"></div>
+    <div style="text-align: center"><h4>Подразделения</h4></div>
     <div style="min-height: 40px; width: 100%;">
 
 
@@ -122,6 +125,9 @@ $this->registerJS($script);
     </div>
 
     <div style="position: absolute; right: 5px; bottom: 5px; ">
+        <div style="margin: 5px; display: inline-block">
+            <a href="#" class="btn btn-danger" id="btn-close-modal-division">Отмена</a>
+        </div>
         <div style="margin: 5px ; display: inline-block">
             <a href="#" class="btn btn-success" id="btn-add-divisions" name="0">Применить</a>
         </div>
@@ -142,7 +148,7 @@ $this->registerJS($script);
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 30; /* Должен быть выше чем у подложки*/
-        box-shadow: 0 3px 10px -.5px rgba(0, 0, 0, .2);
+        box-shadow: 1px 3px 10px -.5px rgba(0, 0, 0, .2);
     }
 
 

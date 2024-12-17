@@ -14,24 +14,19 @@ $this->registerJsFile('@web/js/fav.js',
 <?php echo \app\components\BackButtonWidget::widget(['url' => (Url::to(['/prikaz', 'year' => $y, 'month' => $m]))]) ?>
 
 
+<div style="display: flex; align-items: center;justify-content: space-between">
+    <?php echo \app\components\PrikazStatusWidget::widget(['status_name'=>$p->status_name, 'color'=>$p->color]) ?>
+    <?php echo \app\components\ForDivisionsWidget::widget(['divisions'=>$divisions, 'checked_ids'=>$checked_ids]) ?>
+    <?php echo \app\components\FavIconWidget::widget(['p'=>$p]) ?>
 
+</div>
 
 <?php echo \app\components\PrikazTitle::widget(['p'=>$p]); ?>
 
-<?php if($ext !== "pdf") : ?>
-    <div style="margin-top: 20px; display: inline-block;" id="file" >
-
-        <?= yii\helpers\Html::a('Прикрепленный файл', ['prikaz/download', 'filename' => $p->filename ], [
-            'class' => 'btn btn-warning',
-            'style' =>[]
-        ]) ?>
-    </div>
-
+<?php if ($ext !== "pdf" || isMobile()) : ?>
+    <?php echo \app\components\FileDownloadBtnWidget::widget(['file'=>$p->filename, ]) ?>
 <?php else: ?>
-    <div id="file" style="position: relative">
-
-        <iframe src="<?php echo Url::toRoute(["read", 'id' => $p->id]); ?>" frameborder="0" class="pdf" ></iframe>
-    </div>
+    <?php echo \app\components\FileIframePDFWidget::widget(['prikaz_id'=>$p->id, ]) ?>
 <?php endif; ?>
 
 <?php echo \app\components\ModifiedPrikazListWidget::widget(['p'=>$p, 'canceled'=>$canceled, 'modified'=>$modified, 'canceling'=>$canceling, 'modifing'=>$modifing, 'update'=>false]) ?>

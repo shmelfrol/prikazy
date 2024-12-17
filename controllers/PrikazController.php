@@ -110,6 +110,8 @@ class PrikazController extends Controller
         $currentUser = Yii::$app->user;
 
         $p = getPrikaz($id);
+//        var_dump($p);
+//        die();
 
 
         $indexes = Index::find()->all();
@@ -175,7 +177,7 @@ class PrikazController extends Controller
         $checkedDivisions = Division::find()->andWhere(['IN', 'division.id', $checked_ids])->all();
 
 
-        return $this->render('update', compact('model', 'p', 'items', 'error', 'file', 'ext', 'y', 'm', 'items', 'canceled', 'modified', 'canceling', 'modifing', 'divisions', 'checked_ids', 'checkedDivisions'));
+        return $this->render('update', compact('model', 'p', 'items', 'error', 'file', 'ext', 'y', 'm', 'items', 'canceled', 'modified', 'canceling', 'modifing', 'divisions', 'checked_ids', 'checkedDivisions', ));
     }
 
     public function actionDownload($filename)
@@ -213,9 +215,12 @@ class PrikazController extends Controller
         $ext = $p->getFileExtension();
         $y = date('Y', $p->reldate);
         $m = date('m', $p->reldate);
+        $divisions = Division::find()->all();
+        $prikazDivisions = PrikazDivision::find()->where(['prikaz_id'=>$p->id])->all();
+        $checked_ids=ArrayHelper::map($prikazDivisions, 'division_id', 'division_id',);
+        $checkedDivisions = Division::find()->andWhere(['IN', 'division.id', $checked_ids])->all();
 
-
-        return $this->render('view', compact('p', 'ext', 'modifing', 'canceling', 'canceled', 'modified', 'y', 'm'));
+        return $this->render('view', compact('p', 'ext', 'modifing', 'canceling', 'canceled', 'modified', 'y', 'm', 'prikazDivisions', 'divisions', 'checked_ids', 'checkedDivisions',));
     }
 
     public function actionRead($id)

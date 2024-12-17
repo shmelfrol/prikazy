@@ -20,9 +20,8 @@ class PrikazCopy
     public $prikaz_id;
     public $status_name;
     public $divisions;
-
-
-
+    public $status;
+    public $color;
 
 
 }

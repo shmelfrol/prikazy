@@ -32,7 +32,7 @@ class Prikaz extends ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'numc', 'text', 'filename', 'index_id', 'cteated_at', 'created_by', 'reldate', 'symbol', 'prikaz_id', 'divisions'], 'safe'],
+            [['id', 'numc', 'text', 'filename', 'index_id', 'cteated_at', 'created_by', 'reldate', 'symbol', 'prikaz_id', 'divisions', 'color', 'status_name'], 'safe'],
         ];
     }
 

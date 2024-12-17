@@ -18,6 +18,7 @@
         color: white;
         margin: 1px;
         padding: 3px 5px 3px 5px;
+
     }
     .prikaz-division-small{
         border-radius: 4px;

@@ -227,7 +227,7 @@ $p->status_name="1111";
     <div style="min-height: 40px; width: 100%;"></div>
     <div style="position: absolute; right: 5px; bottom: 5px; ">
         <div style="margin: 5px; display: inline-block">
-            <a href="#" class="btn btn-success" id="btn-cancel">Отмена</a>
+            <a href="#" class="btn btn-danger" id="btn-cancel">Отмена</a>
         </div>
         <div style="margin: 5px ; display: inline-block">
             <a href="#" class="btn btn-success" id="btn-submit" name="0">Применить</a>
