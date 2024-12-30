@@ -4,7 +4,10 @@
 namespace app\controllers;
 
 
+use app\models\ActionType;
+use app\models\ActionTypeUpdateForm;
 use app\models\CreateRoleForm;
+use app\models\Division;
 use app\models\Index;
 use app\models\IndexCreateForm;
 use app\models\Ldap;
@@ -29,6 +32,15 @@ class AdminUrl
     public $url;
     public $name;
     public $img;
+
+    public function __construct($url, $name, $img)
+    {
+        $this->name=$name;
+        $this->url=$url;
+        $this->img=$img;
+    }
+
+
 }
 
 
@@ -52,42 +64,17 @@ class AdminController extends Controller
     public function actionIndex()
     {
 
-        $roles = new AdminUrl();
-        $roles->url = 'roles';
-        $roles->name = "Роли";
-        $roles->img = '/images/roles.png';
-
-        $permissions = new AdminUrl();
-        $permissions->url = 'permissions';
-        $permissions->name = "Разрешения";
-        $permissions->img = '/images/perms.png';
-
-        $users = new AdminUrl();
-        $users->url = 'users';
-        $users->name = "Пользователи";
-        $users->img = '/images/users.png';
-
-
-//        $ldap = new AdminUrl();
-//        $ldap->url = 'ldap';
-//        $ldap->name = "LDAP";
-//        $ldap->img = '/images/users.png';
-
-        $log = new AdminUrl();
-        $log->url = '/logging';
-        $log->name = 'Логирование';
-        $log->img = '/images/logs.png';
-
-        $indexes = new AdminUrl();
-        $indexes->url = 'indexes';
-        $indexes->name = "Индексы Приказов";
-        $indexes->img = '/images/indexes.png';
-        $urls = [$roles, $permissions, $users, $indexes, $log];
-
-        //$urls = ["roles" => "Роли", "permissions" => "Разрешения", "users" => "Пользователи"];
+        $urls =[
+            ["url"=>'roles', 'name'=>'Роли', 'img'=>'/images/roles.png'],
+            ["url"=>'permissions', 'name'=>'Разрешения', 'img'=>'/images/perms.png'],
+            ["url"=>'users', 'name'=>'Пользователи', 'img'=>'/images/users.png'],
+            ["url"=>'/logging', 'name'=>'Логирование', 'img'=>'/images/logs.png'],
+            ["url"=>'indexes', 'name'=>'Индексы приказов', 'img'=>'/images/indexes.png'],
+            ["url"=>'actions', 'name'=>'Статусы приказов', 'img'=>'/images/indexes.png'],
+            ["url"=>'divisions', 'name'=>'Подразделения', 'img'=>'/images/indexes.png'],
+        ];
 
         return $this->render('index', compact('urls'));
-
     }
 
     public function actionRoles()
@@ -531,6 +518,91 @@ class AdminController extends Controller
         }
 
         $this->redirect(['indexes']);
+
+    }
+
+
+    public function actionActions(){
+        $actions = ActionType::find()->orderBy('id')->all();
+        return $this->render('actions', compact('actions'));
+    }
+
+
+    public  function actionActionUpdate($id){
+            $actionType=ActionType::findOne($id);
+            $model= new ActionTypeUpdateForm();
+            $model->status_name=$actionType->status_name;
+            $model->color=$actionType->color;
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+            $actionType->status_name=$model->status_name;
+            $actionType->color=$model->color;
+            if($actionType->save()){
+                $this->redirect(['actions']);
+            }
+
+        }
+
+            return $this->render('actionUpdate', compact('model', 'actionType'));
+  }
+
+    public function actionAddAction(){
+
+      $model= new ActionTypeUpdateForm();
+      if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+           $actionType= new ActionType();
+          $actionType->status_name=$model->status_name;
+          $actionType->color=$model->color;
+          if($actionType->save()){
+              $this->redirect(['actions']);
+          }
+
+      }
+
+
+      return $this->render('actionAdd', compact('model'));
+
+  }
+
+    public function actionDivisions(){
+        $divisions=Division::find()->all();
+
+
+        return $this->render('divisions', compact('divisions'));
+    }
+
+    public function  actionAddDivision(){
+
+        $model=new Division();
+        $currentUser = Yii::$app->user;
+        if($model->load(Yii::$app->request->post()) && $model->validate()){
+            $model->created_at=time();
+            $model->created_by = $currentUser->id;
+            if($model->save()){
+                $this->redirect(['divisions']);
+            };
+        }
+
+        return $this->render('division_add', compact('model'));
+    }
+
+    public function actionUpdateDivision($id){
+        $currentUser = Yii::$app->user;
+        $model=Division::findOne($id);
+
+
+        if($model->load(Yii::$app->request->post()) && $model->validate()){
+            $model->updated_at=time();
+            $model->updated_by = $currentUser->id;
+            if($model->save()){
+                $this->redirect(['divisions']);
+            };
+        }
+
+        return $this->render('division_update', compact('model'));
+
+
 
     }
 

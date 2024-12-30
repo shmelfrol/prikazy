@@ -34,10 +34,10 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
     <?php
     NavBar::begin([
-        'brandLabel' => '<img src="/images/Logowhite.png" class="img-responsive" style="width: 50px; height: 50px;"/> Приказы КубГТУ',
+        'brandLabel' => '<img src="/images/Logowhite.png" class="img-responsive" style="width: 50px; height: 50px;"/> Приказы',
 //        'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
+        'options' => ['class' => 'navbar-expand-md navbar-dark bg-navbar fixed-top']
     ]);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
@@ -46,7 +46,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 //            ['label' => 'About', 'url' => ['/site/about']],
 //            ['label' => 'Contact', 'url' => ['/site/contact']],
 //            ['label' => 'Приказы', 'url' => ['/prikaz']],
-            ['label' => 'Избранное', 'url' => ['/prikaz/myfav']],
+            ['label' => "Избранное &#9734;", 'url' => ['/prikaz/myfav'], 'encode' => false],
             Yii::$app->user->can('admin') ?['label' => 'Админка', 'url' => ['/admin']]: '',
             Yii::$app->user->isGuest
                 ? ['label' => 'Login', 'url' => ['/site/login']]
@@ -88,3 +88,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 </body>
 </html>
 <?php $this->endPage() ?>
+<style>
+    .bg-navbar {
+        background-color: #0a53be;
+    }
+</style>
